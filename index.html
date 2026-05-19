@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1e40af">
+  <meta name="description" content="Matemàtiques ESO: situacions d’aprenentatge, eines, fórmules i autoavaluació.">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" href="./icon-192.png">
+  <title>Matemàtiques ESO · Situacions i eines v1</title>
+</head>
+<body>
+  <header class="app-header">
+    <p class="eyebrow">PWA educativa</p>
+    <h1>Matemàtiques ESO</h1>
+    <p class="subtitle">Situacions d’aprenentatge, eines i fórmules per 1r, 2n, 3r i 4t d’ESO.</p>
+  </header>
+  <nav class="tabs" aria-label="Navegació principal">
+    <button class="tab active" data-view="home">Inici</button>
+    <button class="tab" data-view="courses">Cursos</button>
+    <button class="tab" data-view="situations">SA</button>
+    <button class="tab" data-view="tools">Eines</button>
+    <button class="tab" data-view="formulas">Fórmules</button>
+    <button class="tab" data-view="assessment">Autoavaluació</button>
+  </nav>
+  <main>
+    <section id="home" class="view active">
+      <div class="hero-grid">
+        <article class="panel"><img src="./assets/situacions.png" alt="Situacions d’aprenentatge"><h2>App nova basada en la base estable</h2><p>Aquesta versió reorganitza la calculadora cap a una app curricular: contextos reals, eines, procediments, representació i comprovació.</p></article>
+        <article class="panel"><img src="./assets/sentits.png" alt="Sentits matemàtics"><h2>Per tot l’ESO</h2><p>Inclou cursos, sentits matemàtics, situacions d’aprenentatge, eines interactives i autoavaluació.</p></article>
+      </div>
+      <div class="grid cards-3">
+        <button class="card action-card" data-jump="courses"><strong>Entrar per curs</strong><span>1r, 2n, 3r o 4t d’ESO.</span></button>
+        <button class="card action-card" data-jump="situations"><strong>Entrar per situació</strong><span>Excursions, tarifes, dades i disseny.</span></button>
+        <button class="card action-card" data-jump="tools"><strong>Entrar per eina</strong><span>Equacions, gràfiques, geometria i estadística.</span></button>
+      </div>
+    </section>
+    <section id="courses" class="view">
+      <div class="section-head"><img src="./assets/cursos.png" alt="Cursos ESO"><div><p class="eyebrow">Itineraris</p><h2>Treball per cursos</h2><p>Selecciona un curs per veure sabers clau, eines recomanades i situacions apropiades.</p></div></div>
+      <form id="course-form" class="panel form-grid"><label>Curs<select id="course-select"></select></label><button type="submit">Veure itinerari</button></form>
+    </section>
+    <section id="situations" class="view">
+      <div class="section-head"><img src="./assets/situacions.png" alt="Situacions d’aprenentatge"><div><p class="eyebrow">SA mare</p><h2>Situacions d’aprenentatge</h2><p>Escenaris típics i adaptables per treballar molts supòsits matemàtics.</p></div></div>
+      <form id="sa-form" class="panel form-grid"><label>Situació<select id="sa-select"></select></label><label>Nivell<select id="sa-level"><option value="1">Nivell 1 · entendre i calcular</option><option value="2">Nivell 2 · representar i comparar</option><option value="3">Nivell 3 · modelitzar i justificar</option><option value="4">Nivell 4 · crear proposta pròpia</option></select></label><button type="submit">Obrir situació</button></form>
+    </section>
+    <section id="tools" class="view">
+      <div class="section-head"><img src="./assets/eines.png" alt="Eines matemàtiques"><div><p class="eyebrow">Motor d’ajuda</p><h2>Eines matemàtiques</h2><p>Calculadores guiades amb entrades robustes, procediment i comprovació.</p></div></div>
+      <form id="tool-form" class="panel"><div class="form-grid"><label>Eina<select id="tool-select"><option value="linear">Equació lineal</option><option value="quadratic">Equació quadràtica</option><option value="proportion">Proporcionalitat</option><option value="percentage">Percentatges</option><option value="geometry">Geometria bàsica</option><option value="statistics">Estadística bàsica</option><option value="graph">Gràfica de funció</option></select></label></div><div id="tool-inputs" class="dynamic-inputs"></div><button type="submit">Calcular</button></form>
+    </section>
+    <section id="formulas" class="view">
+      <div class="section-head"><img src="./assets/grafiques.png" alt="Representacions matemàtiques"><div><p class="eyebrow">Consulta ràpida</p><h2>Fórmules i conceptes</h2><p>Compendi inicial connectat amb l’app de situacions.</p></div></div>
+      <form id="formula-form" class="panel form-grid"><label>Àrea<select id="formula-area"></select></label><label>Fórmula<select id="formula-item"></select></label><button type="submit">Mostrar</button></form>
+    </section>
+    <section id="assessment" class="view">
+      <div class="section-head"><img src="./assets/autoavaluacio.png" alt="Autoavaluació"><div><p class="eyebrow">Reflexió</p><h2>Autoavaluació competencial</h2><p>Checklist per revisar si el procés matemàtic és complet.</p></div></div>
+      <form id="assessment-form" class="panel checklist">
+        <label><input type="checkbox" name="a"> He entès l’enunciat i el context.</label>
+        <label><input type="checkbox" name="a"> He identificat les dades i les unitats.</label>
+        <label><input type="checkbox" name="a"> He triat una estratègia matemàtica adequada.</label>
+        <label><input type="checkbox" name="a"> He representat el problema amb taula, gràfica, esquema o fórmula.</label>
+        <label><input type="checkbox" name="a"> He fet els càlculs i he revisat errors.</label>
+        <label><input type="checkbox" name="a"> He comprovat si el resultat té sentit.</label>
+        <label><input type="checkbox" name="a"> He escrit una conclusió clara.</label>
+        <button type="submit">Avaluar procés</button>
+      </form>
+    </section>
+    <section class="result-section" aria-live="polite"><div id="result" class="result-card"><h2>Resultat i procediment</h2><p>Tria un curs, situació, eina o fórmula per començar.</p></div></section>
+  </main>
+  <footer><p>Matemàtiques ESO · Situacions i eines v1. PWA offline quan queda guardada en memòria cau.</p></footer>
+  <script src="./app.js"></script>
+</body>
+</html>
