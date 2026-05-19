@@ -1,39 +1,48 @@
-# Matemàtiques ESO · Situacions i eines v3
+# Matemàtiques ESO · Situacions i eines v4
 
-Versió corregida i funcional.
+Versió corregida de la PWA educativa de Matemàtiques ESO.
 
-## Correccions importants
+## Correcció principal
 
-- Afegit correctament l’enllaç a `styles.css`.
-- Reescrit `app.js` amb un únic motor estable.
-- Els botons ja executen accions reals.
-- Les situacions d’aprenentatge tenen camps d’entrada i càlcul.
-- Les eines matemàtiques calculen i mostren procediment.
-- Les gràfiques es dibuixen amb canvas després del render.
-- La PWA manté `manifest.json` i `sw.js`.
+La v4 reescriu el motor JavaScript perquè els formularis facin accions reals de manera fiable.
 
-## Què pots fer amb aquesta app
+S'ha corregit especialment:
 
-### Per cursos
-Veure una proposta d’itinerari per 1r, 2n, 3r i 4t d’ESO.
+- canvi d'àrea a l'apartat de Fórmules;
+- botó Mostrar;
+- formularis que podien tornar a dalt de la pàgina sense actualitzar resultat;
+- càrrega de `app.js` amb cache busting `?v=4`;
+- càrrega del Service Worker amb versió nova;
+- botons amb tipus explícit;
+- formularis amb prevenció de recàrrega.
 
-### Situacions d’aprenentatge calculables
-- Organitzem una excursió: cost total, cost per alumne, descompte i pressupost.
-- Dissenyem una aula: àrea, perímetre, cost i escala.
-- Comparem tarifes: costos, millor opció, punt d’igualtat i gràfica.
-- Analitzem una enquesta: mitjana, mediana, moda, rang i freqüències.
-- Consum energètic: cost actual, cost reduït i estalvi.
-- Probabilitat i jocs: probabilitat i freqüència esperada.
+## Què pots fer amb l'app
 
-### Eines
-- Equació lineal.
-- Equació quadràtica.
-- Proporcionalitat.
-- Percentatges.
-- Geometria bàsica.
-- Estadística bàsica.
-- Gràfica de funció.
+- Veure itineraris per 1r, 2n, 3r i 4t ESO.
+- Calcular situacions d'aprenentatge:
+  - excursió,
+  - aula o habitació,
+  - tarifes,
+  - enquesta,
+  - consum energètic,
+  - probabilitat i jocs.
+- Utilitzar eines:
+  - equació lineal,
+  - equació quadràtica,
+  - proporcionalitat,
+  - percentatges,
+  - geometria,
+  - estadística,
+  - gràfiques.
+- Consultar fórmules per àrees.
+- Fer una autoavaluació del procés matemàtic.
 
-## Publicació
+## Recomanació en actualitzar a GitHub Pages
 
-Puja tots els fitxers a GitHub Pages. Si ja havies instal·lat una versió anterior, desinstal·la la PWA o esborra la memòria cau abans de provar aquesta.
+Com que les PWA poden quedar en memòria cau, després de pujar la v4 convé:
+
+1. Obrir la web.
+2. Fer una recàrrega forta.
+3. Si al mòbil continua carregant una versió antiga, desinstal·lar la PWA anterior.
+4. Esborrar dades del lloc o memòria cau.
+5. Tornar a instal·lar.

@@ -13,3 +13,18 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .kpi{background:#f8fafc;border:1px solid var(--slate-200);border-radius:14px;padding:.8rem}
 .kpi strong{display:block;color:var(--blue-900);font-size:1.25rem}
 .muted{color:var(--slate-600)}
+
+/* v4-action-states */
+button:active{transform:translateY(1px)}
+.result-card.updated{
+  animation:v4Flash .45s ease-out;
+}
+@keyframes v4Flash{
+  from{box-shadow:0 0 0 5px rgba(37,99,235,.18), var(--shadow)}
+  to{box-shadow:var(--shadow)}
+}
+.debug-note{
+  margin-top:.75rem;
+  color:var(--slate-600);
+  font-size:.95rem;
+}
