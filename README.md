@@ -1,48 +1,40 @@
-# Matemàtiques ESO · Situacions i eines v4
+# Matemàtiques ESO · Situacions i eines v5
 
-Versió corregida de la PWA educativa de Matemàtiques ESO.
+Versió corregida perquè els nivells de les situacions d’aprenentatge tinguin accions diferents.
 
-## Correcció principal
+## Correcció principal de la v5
 
-La v4 reescriu el motor JavaScript perquè els formularis facin accions reals de manera fiable.
+A la v4 el selector de nivell existia, però el càlcul era pràcticament el mateix independentment del nivell.  
+A la v5 cada situació té comportament diferent segons:
 
-S'ha corregit especialment:
+- **Nivell 1**: entendre i calcular.
+- **Nivell 2**: representar i comparar.
+- **Nivell 3**: modelitzar i justificar.
+- **Nivell 4**: crear proposta pròpia o prendre decisions.
 
-- canvi d'àrea a l'apartat de Fórmules;
-- botó Mostrar;
-- formularis que podien tornar a dalt de la pàgina sense actualitzar resultat;
-- càrrega de `app.js` amb cache busting `?v=4`;
-- càrrega del Service Worker amb versió nova;
-- botons amb tipus explícit;
-- formularis amb prevenció de recàrrega.
+## Exemples
 
-## Què pots fer amb l'app
+### Organitzem una excursió
 
-- Veure itineraris per 1r, 2n, 3r i 4t ESO.
-- Calcular situacions d'aprenentatge:
-  - excursió,
-  - aula o habitació,
-  - tarifes,
-  - enquesta,
-  - consum energètic,
-  - probabilitat i jocs.
-- Utilitzar eines:
-  - equació lineal,
-  - equació quadràtica,
-  - proporcionalitat,
-  - percentatges,
-  - geometria,
-  - estadística,
-  - gràfiques.
-- Consultar fórmules per àrees.
-- Fer una autoavaluació del procés matemàtic.
+- Nivell 1: cost total i pressupost.
+- Nivell 2: percentatges de despeses i comparació.
+- Nivell 3: model del cost segons nombre d’alumnes.
+- Nivell 4: proposta de decisió i descompte necessari.
 
-## Recomanació en actualitzar a GitHub Pages
+### Comparem tarifes
 
-Com que les PWA poden quedar en memòria cau, després de pujar la v4 convé:
+- Nivell 1: calcula costos.
+- Nivell 2: dibuixa gràfica comparativa.
+- Nivell 3: modelitza i troba el punt d’igualtat.
+- Nivell 4: compara perfils de consum.
 
-1. Obrir la web.
-2. Fer una recàrrega forta.
-3. Si al mòbil continua carregant una versió antiga, desinstal·lar la PWA anterior.
-4. Esborrar dades del lloc o memòria cau.
-5. Tornar a instal·lar.
+### Enquesta
+
+- Nivell 1: mitjana, mediana, moda i rang.
+- Nivell 2: taula de freqüències.
+- Nivell 3: interpretació respecte la mitjana.
+- Nivell 4: possible biaix o valors extrems.
+
+## Notes d’actualització
+
+En pujar a GitHub Pages, recorda esborrar memòria cau o desinstal·lar la PWA anterior si el navegador continua carregant la versió antiga.

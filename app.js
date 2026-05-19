@@ -263,18 +263,33 @@
     });
   }
 
+  function getSALevel() {
+    const level = Number($("sa-level")?.value || 1);
+    return [1, 2, 3, 4].includes(level) ? level : 1;
+  }
+
+  function levelTitle(level) {
+    return {
+      1: "Nivell 1 · entendre i calcular",
+      2: "Nivell 2 · representar i comparar",
+      3: "Nivell 3 · modelitzar i justificar",
+      4: "Nivell 4 · crear proposta pròpia"
+    }[level] || "Nivell 1";
+  }
+
   function calculateSA() {
     const key = $("sa-select").value;
-    if (key === "excursion") return calcExcursion();
-    if (key === "room") return calcRoom();
-    if (key === "tariffs") return calcTariffs();
-    if (key === "survey") return calcSurvey();
-    if (key === "energy") return calcEnergy();
-    if (key === "games") return calcGames();
+    const level = getSALevel();
+    if (key === "excursion") return calcExcursion(level);
+    if (key === "room") return calcRoom(level);
+    if (key === "tariffs") return calcTariffs(level);
+    if (key === "survey") return calcSurvey(level);
+    if (key === "energy") return calcEnergy(level);
+    if (key === "games") return calcGames(level);
     throw new Error("Aquesta situació encara no té càlcul directe.");
   }
 
-  function calcExcursion() {
+  function calcExcursion(level) {
     const students = readNumber("sa-a");
     const bus = readNumber("sa-b");
     const ticket = readNumber("sa-c");
@@ -282,60 +297,165 @@
     const discount = readNumber("sa-e");
     const budget = readNumber("sa-f");
     positive(students, "El nombre d’alumnes");
+
     const raw = bus + students * (ticket + food);
     const discountAmount = raw * discount / 100;
     const total = raw - discountAmount;
     const perStudent = total / students;
     const diff = budget - total;
-    render({
-      title: "SA: Organitzem una excursió",
-      summary: diff >= 0 ? `El pressupost és suficient. Sobren <strong>${fmt(diff)} €</strong>.` : `El pressupost no arriba. Falten <strong>${fmt(Math.abs(diff))} €</strong>.`,
-      extra: kpis([["Cost total", `${fmt(total)} €`], ["Cost per alumne", `${fmt(perStudent)} €`], ["Diferència amb pressupost", `${fmt(diff)} €`]]) +
-        table([["Bus", `${fmt(bus)} €`], ["Entrades", `${fmt(students * ticket)} €`], ["Menjar", `${fmt(students * food)} €`], ["Descompte", `-${fmt(discountAmount)} €`]]),
-      steps: ["Calculem entrada + menjar per alumne.", "Multipliquem pel nombre d’alumnes.", "Sumem el cost del bus.", "Apliquem el descompte.", "Compareu el total amb el pressupost."]
-    });
+
+    let title = `SA: Organitzem una excursió · ${levelTitle(level)}`;
+    let summary = "";
+    let extra = "";
+    let steps = [];
+
+    if (level === 1) {
+      summary = diff >= 0 ? `El pressupost és suficient. Sobren <strong>${fmt(diff)} €</strong>.` : `El pressupost no arriba. Falten <strong>${fmt(Math.abs(diff))} €</strong>.`;
+      extra = kpis([["Cost total", `${fmt(total)} €`], ["Cost per alumne", `${fmt(perStudent)} €`], ["Diferència amb pressupost", `${fmt(diff)} €`]]) +
+        table([["Bus", `${fmt(bus)} €`], ["Entrades", `${fmt(students * ticket)} €`], ["Menjar", `${fmt(students * food)} €`], ["Descompte", `-${fmt(discountAmount)} €`]]);
+      steps = ["Calculem entrada + menjar per alumne.", "Multipliquem pel nombre d’alumnes.", "Sumem el bus.", "Apliquem el descompte.", "Compareu amb el pressupost."];
+    }
+
+    if (level === 2) {
+      const busPct = bus / raw * 100;
+      const ticketsPct = students * ticket / raw * 100;
+      const foodPct = students * food / raw * 100;
+      summary = `El cost més important representa el percentatge més alt del total abans de descompte.`;
+      extra = kpis([["Bus", `${fmt(busPct)}%`], ["Entrades", `${fmt(ticketsPct)}%`], ["Menjar", `${fmt(foodPct)}%`], ["Total sense descompte", `${fmt(raw)} €`]]) +
+        table([["Cost per alumne sense descompte", `${fmt(raw / students)} €`], ["Cost per alumne amb descompte", `${fmt(perStudent)} €`], ["Estalvi per alumne", `${fmt(discountAmount / students)} €`]]);
+      steps = ["Separem el cost en bus, entrades i menjar.", "Calculem quin percentatge representa cada part.", "Compareu cost per alumne abans i després del descompte.", "Això ajuda a representar la situació amb gràfics de sectors o barres."];
+    }
+
+    if (level === 3) {
+      const variable = ticket + food;
+      const fixedAfterDiscount = bus * (1 - discount / 100);
+      const variableAfterDiscount = variable * (1 - discount / 100);
+      const maxStudentsForBudget = Math.floor((budget / (1 - discount / 100) - bus) / variable);
+      summary = `Model: <span class="math">C(n)=(${fmt(bus)} + ${fmt(variable)}·n)·(1-${fmt(discount)}/100)</span>.`;
+      extra = kpis([["Cost fix amb descompte", `${fmt(fixedAfterDiscount)} €`], ["Cost variable/alumne amb descompte", `${fmt(variableAfterDiscount)} €`], ["Alumnes màxims amb pressupost", `${fmt(maxStudentsForBudget)}`], ["Alumnes actuals", `${fmt(students)}`]]);
+      steps = ["Construïm una funció del cost segons el nombre d’alumnes.", "La part fixa és el bus.", "La part variable és entrada + menjar per alumne.", "Apliquem el descompte a tota l’expressió.", "Aïllem n per estimar quants alumnes admet el pressupost."];
+    }
+
+    if (level === 4) {
+      const targetPerStudent = budget / students;
+      const neededDiscount = raw > 0 ? Math.max(0, (1 - budget / raw) * 100) : 0;
+      summary = diff >= 0
+        ? `La proposta és viable. Es pot justificar amb un cost per alumne de <strong>${fmt(perStudent)} €</strong>.`
+        : `Cal modificar la proposta. Per ajustar-la al pressupost caldria un descompte aproximat del <strong>${fmt(neededDiscount)}%</strong>.`;
+      extra = kpis([["Límit per alumne", `${fmt(targetPerStudent)} €`], ["Cost actual per alumne", `${fmt(perStudent)} €`], ["Descompte necessari", `${fmt(neededDiscount)}%`]]) +
+        `<div class="debug-note">Conclusió suggerida: justifica si convé buscar transport més barat, reduir el cost del menjar o negociar descompte.</div>`;
+      steps = ["Convertim el pressupost en límit per alumne.", "Compareu el cost real amb aquest límit.", "Si no és viable, calculem quin descompte faria falta.", "La resposta final ha d’incloure decisió i justificació."];
+    }
+
+    render({ title, summary, extra, steps });
   }
 
-  function calcRoom() {
+  function calcRoom(level) {
     const length = readNumber("sa-a");
     const width = readNumber("sa-b");
     const price = readNumber("sa-c");
     const scale = readNumber("sa-d");
     positive(length, "La llargada"); positive(width, "L’amplada"); positive(price, "El preu"); positive(scale, "L’escala");
+
     const area = length * width;
     const perimeter = 2 * (length + width);
     const cost = area * price;
-    render({
-      title: "SA: Dissenyem una aula o habitació",
-      summary: `Àrea = <strong>${fmt(area)} m²</strong>, cost estimat = <strong>${fmt(cost)} €</strong>.`,
-      extra: kpis([["Àrea", `${fmt(area)} m²`], ["Perímetre", `${fmt(perimeter)} m`], ["Cost paviment", `${fmt(cost)} €`], ["Plànol", `${fmt(length / scale)} cm × ${fmt(width / scale)} cm`]]),
-      steps: ["Àrea = llargada·amplada.", "Perímetre = 2(llargada+amplada).", "Cost = àrea·preu per m².", "Al plànol, dividim cada mesura pel valor de l’escala."]
-    });
+    const planL = length / scale;
+    const planW = width / scale;
+
+    let title = `SA: Dissenyem una aula o habitació · ${levelTitle(level)}`;
+    let summary = "";
+    let extra = "";
+    let steps = [];
+
+    if (level === 1) {
+      summary = `Àrea = <strong>${fmt(area)} m²</strong>, perímetre = <strong>${fmt(perimeter)} m</strong>.`;
+      extra = kpis([["Àrea", `${fmt(area)} m²`], ["Perímetre", `${fmt(perimeter)} m`], ["Cost paviment", `${fmt(cost)} €`]]);
+      steps = ["Àrea = llargada·amplada.", "Perímetre = 2(llargada+amplada).", "Cost = àrea·preu per m²."];
+    }
+
+    if (level === 2) {
+      summary = `Al plànol, l’espai faria <strong>${fmt(planL)} cm × ${fmt(planW)} cm</strong>.`;
+      extra = kpis([["Llargada al plànol", `${fmt(planL)} cm`], ["Amplada al plànol", `${fmt(planW)} cm`], ["Escala usada", `1 cm → ${fmt(scale)} m`]]);
+      steps = ["Interpretem l’escala.", "Dividim cada mesura real pel valor que representa 1 cm.", "El resultat són dimensions del plànol en centímetres."];
+    }
+
+    if (level === 3) {
+      const optionCheap = area * (price * 0.85);
+      const optionPremium = area * (price * 1.25);
+      summary = `Comparació de materials: econòmic <strong>${fmt(optionCheap)} €</strong>, estàndard <strong>${fmt(cost)} €</strong>, premium <strong>${fmt(optionPremium)} €</strong>.`;
+      extra = table([["Material econòmic (-15%)", `${fmt(optionCheap)} €`], ["Material estàndard", `${fmt(cost)} €`], ["Material premium (+25%)", `${fmt(optionPremium)} €`]]);
+      steps = ["Mantenim la mateixa àrea.", "Compareu diferents preus per metre quadrat.", "La decisió no depèn només del preu: també cal justificar qualitat, ús i durabilitat."];
+    }
+
+    if (level === 4) {
+      const usable = area * 0.75;
+      const people = Math.floor(usable / 1.5);
+      summary = `Proposta: si només el 75% és espai útil, hi ha <strong>${fmt(usable)} m²</strong> útils i cabrien aproximadament <strong>${people}</strong> persones.`;
+      extra = kpis([["Espai útil estimat", `${fmt(usable)} m²`], ["Persones estimades", people], ["Cost total", `${fmt(cost)} €`]]);
+      steps = ["No tota la superfície és útil: deixem zones de pas.", "Estimem el 75% com a superfície utilitzable.", "Suposem 1,5 m² per persona.", "La proposta final ha d’incloure criteris de comoditat i seguretat."];
+    }
+
+    render({ title, summary, extra, steps });
   }
 
-  function calcTariffs() {
+  function calcTariffs(level) {
     const fa = readNumber("sa-a");
     const va = readNumber("sa-b");
     const fb = readNumber("sa-c");
     const vb = readNumber("sa-d");
     const x = readNumber("sa-e");
+
     const costA = fa + va * x;
     const costB = fb + vb * x;
     const denom = va - vb;
     const cut = Math.abs(denom) > 1e-12 ? (fb - fa) / denom : null;
     const better = costA < costB ? "A" : costB < costA ? "B" : "iguals";
-    const canvasId = `tariff-${Math.random().toString(36).slice(2)}`;
-    render({
-      title: "SA: Comparem tarifes",
-      summary: `Per un consum de ${fmt(x)}, la millor opció és: <strong>${better}</strong>.`,
-      extra: kpis([["Cost tarifa A", `${fmt(costA)} €`], ["Cost tarifa B", `${fmt(costB)} €`], ["Millor opció", better], ["Punt d’igualtat", cut !== null && cut >= 0 ? `${fmt(cut)} unitats` : "no aplicable"]]) +
-        `<div class="canvas-wrap"><canvas id="${canvasId}"></canvas></div>`,
-      steps: ["Cada tarifa és una funció lineal.", "Cost = quota fixa + preu variable·consum.", "Compareu costos per al consum indicat.", "Resolem la igualtat per trobar el punt de tall."]
-    });
-    requestAnimationFrame(() => drawTwoLines(canvasId, (t) => fa + va * t, (t) => fb + vb * t, Math.max(100, x * 1.3)));
+
+    let title = `SA: Comparem tarifes · ${levelTitle(level)}`;
+    let summary = "";
+    let extra = "";
+    let steps = [];
+
+    if (level === 1) {
+      summary = `Per un consum de ${fmt(x)}, la millor opció és: <strong>${better}</strong>.`;
+      extra = kpis([["Cost tarifa A", `${fmt(costA)} €`], ["Cost tarifa B", `${fmt(costB)} €`], ["Diferència", `${fmt(Math.abs(costA - costB))} €`]]);
+      steps = ["Calculem cada tarifa substituint el consum.", "Compareu els dos costos.", "Triem el cost més baix."];
+    }
+
+    if (level === 2) {
+      const canvasId = `tariff-${Math.random().toString(36).slice(2)}`;
+      summary = `Representem les dues tarifes com a rectes.`;
+      extra = kpis([["Punt d’igualtat", cut !== null && cut >= 0 ? `${fmt(cut)} unitats` : "no aplicable"], ["Tarifa A", `C=${fmt(fa)}+${fmt(va)}x`], ["Tarifa B", `C=${fmt(fb)}+${fmt(vb)}x`]]) +
+        `<div class="canvas-wrap"><canvas id="${canvasId}"></canvas></div>`;
+      steps = ["Cada tarifa és una funció lineal.", "El tall amb l’eix vertical és la quota fixa.", "La pendent és el preu variable.", "El punt de tall indica quan costen igual."];
+      render({ title, summary, extra, steps });
+      requestAnimationFrame(() => drawTwoLines(canvasId, (t) => fa + va * t, (t) => fb + vb * t, Math.max(100, x * 1.3)));
+      return;
+    }
+
+    if (level === 3) {
+      summary = cut !== null ? `Modelització: les tarifes són iguals quan <strong>x=${fmt(cut)}</strong>.` : "Les tarifes tenen la mateixa pendent; no hi ha un únic punt de tall.";
+      extra = table([["Tarifa A", `C_A(x)=${fmt(fa)}+${fmt(va)}x`], ["Tarifa B", `C_B(x)=${fmt(fb)}+${fmt(vb)}x`], ["Equació", `${fmt(fa)}+${fmt(va)}x = ${fmt(fb)}+${fmt(vb)}x`]]);
+      steps = ["Escrivim les dues funcions.", "Igualem les expressions.", "Aïllem x.", "Interpretem el resultat com a consum de canvi de tarifa."];
+    }
+
+    if (level === 4) {
+      const profiles = [25, 75, 150];
+      const rows = profiles.map((p) => {
+        const a = fa + va * p;
+        const b = fb + vb * p;
+        return [`Consum ${p}`, `A=${fmt(a)} €, B=${fmt(b)} €, millor: ${a < b ? "A" : b < a ? "B" : "iguals"}`];
+      });
+      summary = "Decisió per perfils de consum.";
+      extra = table(rows) + `<div class="debug-note">Conclusió suggerida: no hi ha una tarifa universalment millor si les rectes es tallen; depèn del consum.</div>`;
+      steps = ["Triem perfils de consum baix, mitjà i alt.", "Calculem el cost de cada tarifa.", "Justifiquem per a quin perfil convé cada opció."];
+    }
+
+    render({ title, summary, extra, steps });
   }
 
-  function calcSurvey() {
+  function calcSurvey(level) {
     const arr = readList("sa-list");
     const sorted = [...arr].sort((a, b) => a - b);
     const mean = arr.reduce((s, x) => s + x, 0) / arr.length;
@@ -345,46 +465,133 @@
     arr.forEach((x) => { freq[x] = (freq[x] || 0) + 1; });
     const maxFreq = Math.max(...Object.values(freq));
     const modes = Object.entries(freq).filter(([, v]) => v === maxFreq).map(([k]) => k);
-    render({
-      title: "SA: Analitzem una enquesta",
-      summary: `Mitjana = <strong>${fmt(mean)}</strong>, mediana = <strong>${fmt(median)}</strong>, moda = <strong>${modes.join(", ")}</strong>.`,
-      extra: kpis([["N dades", arr.length], ["Rang", fmt(range)], ["Màxim", fmt(sorted.at(-1))], ["Mínim", fmt(sorted[0])]]) + freqTable(freq),
-      steps: ["Ordenem les dades.", "Mitjana = suma/n.", "Mediana = valor central.", "Moda = valor amb més freqüència.", "Rang = màxim - mínim."]
-    });
+
+    let title = `SA: Analitzem una enquesta · ${levelTitle(level)}`;
+    let summary = "";
+    let extra = "";
+    let steps = [];
+
+    if (level === 1) {
+      summary = `Mitjana = <strong>${fmt(mean)}</strong>, mediana = <strong>${fmt(median)}</strong>, moda = <strong>${modes.join(", ")}</strong>.`;
+      extra = kpis([["N dades", arr.length], ["Rang", fmt(range)], ["Màxim", fmt(sorted.at(-1))], ["Mínim", fmt(sorted[0])]]);
+      steps = ["Ordenem les dades.", "Calculem mitjana, mediana i moda.", "Calculem el rang."];
+    }
+
+    if (level === 2) {
+      summary = "Taula de freqüències per representar amb gràfic de barres.";
+      extra = freqTable(freq);
+      steps = ["Comptem quantes vegades apareix cada valor.", "Això crea una taula de freqüències.", "A partir d’aquesta taula es pot fer un gràfic de barres."];
+    }
+
+    if (level === 3) {
+      const below = arr.filter((x) => x < mean).length;
+      const above = arr.filter((x) => x > mean).length;
+      summary = `Hi ha <strong>${below}</strong> valors per sota de la mitjana i <strong>${above}</strong> per sobre.`;
+      extra = kpis([["Mitjana", fmt(mean)], ["Per sota", below], ["Per sobre", above], ["Iguals a mitjana", arr.length - below - above]]);
+      steps = ["Fem servir la mitjana com a referència.", "Classifiquem dades per sota, per sobre o iguals.", "Això ajuda a interpretar la distribució."];
+    }
+
+    if (level === 4) {
+      const outlierLimit = mean + range * 0.5;
+      const possibleOutliers = arr.filter((x) => x > outlierLimit);
+      summary = possibleOutliers.length ? `Hi ha possibles valors extrems: <strong>${possibleOutliers.join(", ")}</strong>.` : "No es detecten valors extrems evidents amb aquest criteri simple.";
+      extra = `<div class="debug-note">Conclusió suggerida: explica si la mostra és prou gran, si pot haver-hi biaix i si la mitjana representa bé el grup.</div>`;
+      steps = ["Analitzem si hi ha valors que poden distorsionar la mitjana.", "Valorem si la mostra és representativa.", "La conclusió ha d’incloure una interpretació, no només càlculs."];
+    }
+
+    render({ title, summary, extra, steps });
   }
 
-  function calcEnergy() {
+  function calcEnergy(level) {
     const kwh = readNumber("sa-a");
     const price = readNumber("sa-b");
     const fixed = readNumber("sa-c");
     const reduction = readNumber("sa-d");
     positive(kwh, "El consum"); positive(price, "El preu");
+
     const cost = kwh * price + fixed;
     const reducedKwh = kwh * (1 - reduction / 100);
     const reducedCost = reducedKwh * price + fixed;
     const saving = cost - reducedCost;
-    render({
-      title: "SA: Consum energètic i sostenibilitat",
-      summary: `Cost actual = <strong>${fmt(cost)} €</strong>. Amb reducció: <strong>${fmt(reducedCost)} €</strong>.`,
-      extra: kpis([["Consum actual", `${fmt(kwh)} kWh`], ["Consum reduït", `${fmt(reducedKwh)} kWh`], ["Estalvi mensual", `${fmt(saving)} €`], ["Estalvi anual", `${fmt(saving * 12)} €`]]),
-      steps: ["Cost variable = consum·preu.", "Afegim el cost fix.", "Apliquem la reducció al consum.", "Compareu cost inicial i reduït."]
-    });
+
+    let title = `SA: Consum energètic i sostenibilitat · ${levelTitle(level)}`;
+    let summary = "";
+    let extra = "";
+    let steps = [];
+
+    if (level === 1) {
+      summary = `Cost actual = <strong>${fmt(cost)} €</strong>.`;
+      extra = kpis([["Consum", `${fmt(kwh)} kWh`], ["Cost variable", `${fmt(kwh * price)} €`], ["Cost fix", `${fmt(fixed)} €`], ["Cost total", `${fmt(cost)} €`]]);
+      steps = ["Multipliquem kWh pel preu.", "Afegim el cost fix.", "Obtenim el cost mensual."];
+    }
+
+    if (level === 2) {
+      summary = `Amb una reducció del ${fmt(reduction)}%, el cost seria <strong>${fmt(reducedCost)} €</strong>.`;
+      extra = kpis([["Consum reduït", `${fmt(reducedKwh)} kWh`], ["Estalvi mensual", `${fmt(saving)} €`], ["Estalvi anual", `${fmt(saving * 12)} €`]]);
+      steps = ["Apliquem el percentatge de reducció al consum.", "Calculem el nou cost.", "Compareu cost inicial i reduït."];
+    }
+
+    if (level === 3) {
+      const model = `C(x)=${fmt(fixed)}+${fmt(price)}x`;
+      summary = `Model de cost: <span class="math">${model}</span>.`;
+      extra = table([["Consum actual", `${fmt(kwh)} kWh`], ["Funció", model], ["Cost per 100 kWh", `${fmt(fixed + price * 100)} €`], ["Cost per 300 kWh", `${fmt(fixed + price * 300)} €`]]);
+      steps = ["Modelitzem el cost com a funció lineal del consum.", "La quota fixa és el terme independent.", "El preu per kWh és la pendent.", "Això permet fer prediccions."];
+    }
+
+    if (level === 4) {
+      const targetSaving = cost * 0.2;
+      const neededReduction = (targetSaving / (kwh * price)) * 100;
+      summary = `Per reduir la factura un 20%, caldria reduir aproximadament el consum un <strong>${fmt(neededReduction)}%</strong>.`;
+      extra = kpis([["Objectiu estalvi", `${fmt(targetSaving)} €`], ["Reducció necessària", `${fmt(neededReduction)}%`], ["Estalvi amb proposta actual", `${fmt(saving)} €`]]);
+      steps = ["Definim un objectiu d’estalvi.", "Com que el cost fix no es redueix, l’estalvi surt del consum variable.", "Calculem quin percentatge de consum caldria reduir.", "La proposta final ha d’incloure accions concretes."];
+    }
+
+    render({ title, summary, extra, steps });
   }
 
-  function calcGames() {
+  function calcGames(level) {
     const fav = readNumber("sa-a");
     const poss = readNumber("sa-b");
     const trials = readNumber("sa-c");
     positive(poss, "Els casos possibles"); positive(trials, "El nombre de partides");
     if (fav < 0 || fav > poss) throw new Error("Els casos favorables han d’estar entre 0 i els casos possibles.");
+
     const p = fav / poss;
     const expected = p * trials;
-    render({
-      title: "SA: Probabilitat i jocs",
-      summary: `Probabilitat = <strong>${fmt(p * 100)}%</strong>. En ${fmt(trials)} partides, s’esperen <strong>${fmt(expected)}</strong> èxits.`,
-      extra: kpis([["Probabilitat", fmt(p)], ["Percentatge", `${fmt(p * 100)}%`], ["Freqüència esperada", fmt(expected)]]),
-      steps: ["Apliquem Laplace: favorables/possibles.", "Convertim a percentatge.", "Multipliquem per partides per obtenir freqüència esperada."]
-    });
+
+    let title = `SA: Probabilitat i jocs · ${levelTitle(level)}`;
+    let summary = "";
+    let extra = "";
+    let steps = [];
+
+    if (level === 1) {
+      summary = `Probabilitat = <strong>${fmt(p * 100)}%</strong>.`;
+      extra = kpis([["Probabilitat", fmt(p)], ["Percentatge", `${fmt(p * 100)}%`]]);
+      steps = ["Apliquem Laplace: favorables/possibles.", "Convertim a percentatge multiplicant per 100."];
+    }
+
+    if (level === 2) {
+      summary = `En ${fmt(trials)} partides, s’esperen aproximadament <strong>${fmt(expected)}</strong> èxits.`;
+      extra = kpis([["Partides", fmt(trials)], ["Freqüència esperada", fmt(expected)], ["No èxits esperats", fmt(trials - expected)]]);
+      steps = ["Multipliquem probabilitat per nombre de partides.", "El resultat és una esperança, no una garantia.", "Compareu freqüència teòrica i resultats reals si feu una simulació."];
+    }
+
+    if (level === 3) {
+      const fairPrize = p > 0 ? 1 / p : Infinity;
+      summary = `Si jugar costa 1 punt, el premi just aproximat seria <strong>${fmt(fairPrize)} punts</strong>.`;
+      extra = kpis([["Probabilitat d’èxit", fmt(p)], ["Premi just", fmt(fairPrize)], ["Risc", `${fmt((1 - p) * 100)}% de no èxit`]]);
+      steps = ["Un joc just equilibra cost i esperança de guany.", "Si el cost és 1, el premi just és aproximadament 1/p.", "Això ajuda a decidir si un joc és favorable o desfavorable."];
+    }
+
+    if (level === 4) {
+      const targetP = 0.5;
+      const neededFav = Math.round(poss * targetP);
+      summary = `Per fer un joc aproximadament equilibrat al 50%, caldrien <strong>${neededFav}</strong> casos favorables de ${fmt(poss)}.`;
+      extra = `<div class="debug-note">Conclusió suggerida: modifica regles, casos favorables o premis perquè el joc sigui just.</div>`;
+      steps = ["Definim una probabilitat objectiu.", "Calculem casos favorables necessaris.", "La proposta final ha d’explicar com canvien les regles i per què el joc és més just."];
+    }
+
+    render({ title, summary, extra, steps });
   }
 
   function calculateTool() {
@@ -595,6 +802,6 @@
   }
 
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=4").catch(console.warn));
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=5").catch(console.warn));
   }
 })();
