@@ -8,13 +8,14 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" href="./icon-192.png">
-  <title>Matemàtiques ESO · Situacions i eines v2</title>
+  <link rel="stylesheet" href="./styles.css">
+  <title>Matemàtiques ESO · Situacions i eines v3</title>
 </head>
 <body>
   <header class="app-header">
     <p class="eyebrow">PWA educativa</p>
     <h1>Matemàtiques ESO</h1>
-    <p class="subtitle">Situacions d’aprenentatge amb càlcul real, eines i fórmules per 1r, 2n, 3r i 4t d’ESO.</p>
+    <p class="subtitle">Situacions d’aprenentatge amb càlcul real, eines, fórmules i gràfiques per 1r, 2n, 3r i 4t d’ESO.</p>
   </header>
   <nav class="tabs" aria-label="Navegació principal">
     <button class="tab active" data-view="home">Inici</button>
@@ -42,7 +43,14 @@
     </section>
     <section id="situations" class="view">
       <div class="section-head"><img src="./assets/situacions.png" alt="Situacions d’aprenentatge"><div><p class="eyebrow">SA mare</p><h2>Situacions d’aprenentatge</h2><p>Escenaris típics i adaptables per treballar molts supòsits matemàtics.</p></div></div>
-      <form id="sa-form" class="panel"><div class="form-grid"><label>Situació<select id="sa-select"></select></label><label>Nivell<select id="sa-level"><option value="1">Nivell 1 · entendre i calcular</option><option value="2">Nivell 2 · representar i comparar</option><option value="3">Nivell 3 · modelitzar i justificar</option><option value="4">Nivell 4 · crear proposta pròpia</option></select></label></div><div id="sa-inputs" class="dynamic-inputs"></div><button type="submit">Calcular situació</button></form>
+      <form id="sa-form" class="panel">
+        <div class="form-grid">
+          <label>Situació<select id="sa-select"></select></label>
+          <label>Nivell<select id="sa-level"><option value="1">Nivell 1 · entendre i calcular</option><option value="2">Nivell 2 · representar i comparar</option><option value="3">Nivell 3 · modelitzar i justificar</option><option value="4">Nivell 4 · crear proposta pròpia</option></select></label>
+        </div>
+        <div id="sa-inputs" class="dynamic-inputs"></div>
+        <button type="submit">Calcular situació</button>
+      </form>
     </section>
     <section id="tools" class="view">
       <div class="section-head"><img src="./assets/eines.png" alt="Eines matemàtiques"><div><p class="eyebrow">Motor d’ajuda</p><h2>Eines matemàtiques</h2><p>Calculadores guiades amb entrades robustes, procediment i comprovació.</p></div></div>
@@ -67,7 +75,7 @@
     </section>
     <section class="result-section" aria-live="polite"><div id="result" class="result-card"><h2>Resultat i procediment</h2><p>Tria un curs, situació, eina o fórmula per començar.</p></div></section>
   </main>
-  <footer><p>Matemàtiques ESO · Situacions i eines v2. PWA offline quan queda guardada en memòria cau.</p></footer>
+  <footer><p>Matemàtiques ESO · Situacions i eines v3. PWA offline quan queda guardada en memòria cau.</p></footer>
   <script src="./app.js"></script>
 </body>
 </html>
