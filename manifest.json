@@ -1,7 +1,7 @@
 {
-  "name": "Matemàtiques ESO · Situacions i eines v1",
+  "name": "Matemàtiques ESO · Situacions i eines v2",
   "short_name": "Mates ESO",
-  "description": "PWA educativa per a Matemàtiques ESO: situacions d’aprenentatge, eines, fórmules i autoavaluació.",
+  "description": "PWA educativa per a Matemàtiques ESO amb situacions d’aprenentatge calculables, eines matemàtiques, fórmules i autoavaluació.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

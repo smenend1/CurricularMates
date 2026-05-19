@@ -1,5 +1,5 @@
 "use strict";
-const CACHE_NAME="matematiques-eso-pwa-v1";
+const CACHE_NAME="matematiques-eso-pwa-v2";
 const APP_SHELL=[
   "./",
   "./index.html",
