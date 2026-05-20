@@ -1,7 +1,7 @@
 {
-  "name": "Matemàtiques ESO · Situacions i eines v13",
-  "short_name": "Mates ESO",
-  "description": "PWA educativa de Matemàtiques ESO amb rúbriques LOMLOE específiques per SA amb nivells NA, AS, AN i AE.",
+  "name": "Situacions d’aprenentatge de Matemàtiques ESO",
+  "short_name": "SA Matemàtiques",
+  "description": "Eina educativa per preparar, treballar, avaluar i exportar situacions d’aprenentatge de Matemàtiques a l’ESO.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

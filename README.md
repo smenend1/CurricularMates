@@ -1,25 +1,23 @@
-# Matemàtiques ESO · Situacions i eines v13
+# Situacions d’aprenentatge de Matemàtiques ESO
 
-## Novetat principal
+## Canvis aplicats
 
-La v13 afegeix rúbriques formals LOMLOE específiques per a cada situació d’aprenentatge.
+- S’ha afegit una plantilla completa de programació de la situació d’aprenentatge.
+- L’informe inclou:
+  - títol, curs i matèria;
+  - descripció i repte;
+  - competències específiques;
+  - competències transversals;
+  - objectius d’aprenentatge;
+  - criteris d’avaluació;
+  - sabers;
+  - desenvolupament, recursos i metodologia;
+  - activitats inicials, de desenvolupament, d’estructuració i d’aplicació;
+  - vectors educatius;
+  - rúbrica d’avaluació en format quadre.
 
-Cada informe de SA incorpora al final una rúbrica amb els nivells:
+## Impressió
 
-- **NA**: No assolit
-- **AS**: Assoliment satisfactori
-- **AN**: Assoliment notable
-- **AE**: Assoliment excel·lent
+La impressió exporta el contingut visual complet de l’informe generat, amb quadres, colors, taules, connexió curricular, plantilla de situació i rúbrica final.
 
-## Característiques
-
-- Rúbrica diferent segons la SA concreta.
-- Com a mínim 4 criteris per situació.
-- Format en quadre.
-- Colors diferenciats per nivell.
-- La rúbrica s’adjunta al final de l’informe.
-- La rúbrica també apareix en l’exportació PDF visual.
-
-## Notes
-
-La rúbrica valora el procés competencial: comprensió, estratègia, càlcul, representació, justificació i conclusió.
+No apareixen referències a versions, noms interns de l’eina ni mencions normatives visibles dins l’informe.

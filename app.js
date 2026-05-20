@@ -469,7 +469,7 @@
     ];
     return `
       <section class="formal-rubric">
-        <h3>Rúbrica LOMLOE de la SA: ${title}</h3>
+        <h3>Rúbrica d’avaluació de la situació: ${title}</h3>
         <p class="small-note">Nivells d’assoliment: NA, AS, AN i AE. La valoració ha de tenir en compte el procés, la justificació i la comunicació matemàtica, no només el resultat numèric.</p>
         <div class="rubric-levels">
           <span><span class="rubric-tag na">NA</span>&nbsp; No assolit</span>
@@ -491,6 +491,199 @@
             ${rows.map(r => `<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join("")}
           </tbody>
         </table>
+      </section>
+    `;
+  }
+
+
+  function transversalCompetenciesHTML(){
+    return `
+      <ul>
+        <li><strong>Competència digital:</strong> ús d’una eina digital per calcular, representar, revisar i documentar el procés.</li>
+        <li><strong>Competència personal, social i d’aprendre a aprendre:</strong> revisió del procediment, detecció d’errors i millora de la resposta.</li>
+        <li><strong>Competència ciutadana:</strong> presa de decisions raonada en contextos propers i compartits.</li>
+        <li><strong>Competència emprenedora:</strong> proposta d’alternatives, justificació i valoració de la viabilitat.</li>
+      </ul>
+    `;
+  }
+
+  function learningObjectivesForCurrentSA(){
+    const item = currentItem ? currentItem() : {title:"situació"};
+    const key = currentSAKey ? currentSAKey() : "";
+    const base = {
+      market:[
+        "Calcular costos, descomptes i cost per alumne per decidir si una compra col·lectiva és viable.",
+        "Interpretar percentatges i imports en euros per justificar una decisió de pressupost.",
+        "Comunicar una conclusió clara sobre la proposta d’esmorzar saludable."
+      ],
+      classroom:[
+        "Calcular àrea, perímetre i espai disponible per valorar una distribució d’aula.",
+        "Aplicar l’escala i les unitats de mesura per representar l’espai de manera coherent.",
+        "Justificar una proposta d’organització de l’aula amb criteris de comoditat i seguretat."
+      ],
+      survey1:[
+        "Organitzar dades d’una enquesta per obtenir-ne mesures estadístiques bàsiques.",
+        "Interpretar mitjana, mediana, rang i freqüències per descriure el grup.",
+        "Elaborar una conclusió crítica sobre les dades i la seva representativitat."
+      ],
+      recipe:[
+        "Aplicar proporcionalitat directa per adaptar quantitats d’una recepta a un nombre diferent de persones.",
+        "Utilitzar unitats de massa i capacitat per comunicar les quantitats ajustades.",
+        "Justificar arrodoniments i decisions pràctiques en el context de la recepta."
+      ],
+      map:[
+        "Aplicar l’escala d’un mapa per calcular distàncies reals.",
+        "Relacionar distància, velocitat i temps per planificar una ruta.",
+        "Valorar la viabilitat de la ruta incorporant descansos i marge de seguretat."
+      ],
+      budget:[
+        "Calcular imports a partir de percentatges per repartir un pressupost.",
+        "Comprovar la coherència del repartiment i detectar possibles desajustos.",
+        "Justificar una proposta de distribució del pressupost segons prioritats."
+      ],
+      tariffs3:[
+        "Modelitzar dues tarifes mitjançant funcions lineals per comparar costos.",
+        "Calcular i interpretar el punt d’igualtat entre dues opcions.",
+        "Justificar quina tarifa és més adequada segons perfils de consum."
+      ],
+      sport:[
+        "Comptar partits i organitzar torns per planificar una competició.",
+        "Relacionar equips, pistes i temps per construir un calendari viable.",
+        "Proposar ajustos per millorar l’organització temporal."
+      ],
+      dataNews:[
+        "Calcular variacions absolutes i percentuals per interpretar una notícia amb dades.",
+        "Analitzar críticament mostra, període i context abans d’acceptar una conclusió.",
+        "Redactar una interpretació rigorosa i no exagerada de les dades."
+      ],
+      optimization:[
+        "Modelitzar l’àrea d’un rectangle amb perímetre fix per estudiar-ne el màxim.",
+        "Relacionar geometria i funcions per justificar una decisió de disseny.",
+        "Calcular dimensions, àrea i cost amb unitats coherents."
+      ],
+      loan:[
+        "Aplicar percentatges i interès compost per comparar formes de pagament.",
+        "Valorar el cost final de cada opció i la diferència econòmica.",
+        "Justificar una decisió financera responsable a partir dels càlculs."
+      ],
+      trig:[
+        "Aplicar la tangent en un triangle rectangle per estimar una altura inaccessible.",
+        "Interpretar distància, angle i altura dels ulls en una mesura indirecta.",
+        "Valorar possibles errors de mesura i comunicar una conclusió realista."
+      ]
+    };
+    return base[key] || [
+      `Analitzar la situació "${item.title}" per identificar dades, relacions i objectiu.`,
+      "Aplicar procediments matemàtics adequats per obtenir una resposta justificada.",
+      "Comunicar el procés i la conclusió amb claredat."
+    ];
+  }
+
+  function contextDescriptionForCurrentSA(){
+    const item = currentItem ? currentItem() : {title:"situació"};
+    const key = currentSAKey ? currentSAKey() : "";
+    const desc = {
+      market:"El grup ha d’organitzar un esmorzar saludable amb un pressupost limitat. El repte és calcular el cost total, el cost per alumne i decidir si la proposta és viable.",
+      classroom:"El grup vol reorganitzar l’aula. El repte és calcular l’espai disponible, interpretar l’escala i valorar si la distribució proposada és adequada.",
+      survey1:"L’alumnat recull dades del grup i les analitza. El repte és organitzar-les, calcular mesures estadístiques i formular una conclusió raonada.",
+      recipe:"Cal adaptar una recepta a un nombre diferent de persones. El repte és aplicar proporcionalitat i justificar les quantitats finals.",
+      map:"S’ha de planificar una ruta a partir d’un mapa. El repte és convertir distàncies, estimar temps i decidir si la ruta és viable.",
+      budget:"El grup reparteix un pressupost entre diferents partides. El repte és calcular percentatges, comprovar coherència i justificar prioritats.",
+      tariffs3:"Es comparen dues tarifes amb quota fixa i cost variable. El repte és modelitzar-les, comparar-les i decidir quina convé segons el consum.",
+      sport:"S’ha d’organitzar una competició esportiva. El repte és comptar partits, distribuir pistes i estimar el temps total.",
+      dataNews:"Es parteix d’una notícia amb dades numèriques. El repte és calcular variacions i interpretar críticament el missatge.",
+      optimization:"Es vol dissenyar un jardí rectangular amb perímetre fix. El repte és estudiar l’àrea i justificar una proposta òptima.",
+      loan:"Es comparen dues formes de pagament. El repte és calcular el cost final i prendre una decisió econòmica responsable.",
+      trig:"Es vol estimar una altura amb una mesura indirecta. El repte és aplicar trigonometria i valorar l’error de mesura."
+    };
+    return desc[key] || `La situació "${item.title}" planteja un context proper que requereix comprendre dades, aplicar procediments matemàtics i justificar una resposta.`;
+  }
+
+  function vectorsHTML(){
+    return `
+      <ul>
+        <li><strong>Aprenentatges competencials:</strong> la situació demana aplicar sabers matemàtics en un context funcional.</li>
+        <li><strong>Perspectiva de gènere:</strong> els rols i exemples es poden distribuir de manera equitativa i no estereotipada.</li>
+        <li><strong>Universalitat del currículum:</strong> els nivells i suports permeten diferents graus d’accés i aprofundiment.</li>
+        <li><strong>Qualitat de les llengües:</strong> l’alumnat ha d’explicar el procés i redactar una conclusió matemàtica clara.</li>
+        <li><strong>Ciutadania democràtica i consciència global:</strong> es promou la presa de decisions argumentada i responsable.</li>
+        <li><strong>Benestar emocional:</strong> es fomenta la revisió, l’error com a aprenentatge i el treball cooperatiu respectuós.</li>
+      </ul>
+    `;
+  }
+
+  function saTemplateHTML(){
+    const item = currentItem ? currentItem() : {title:"Situació"};
+    const courseLabel = SA && currentCourse ? SA[currentCourse()].label : "ESO";
+    const cur = getCurriculum ? getCurriculum() : {ce:[], ca:[], sabers:[]};
+    const objectives = learningObjectivesForCurrentSA();
+    const criteria = Array.isArray(cur.ca) ? cur.ca.map(([code,text]) => `${code}: ${text}`) : [];
+    return `
+      <section class="sa-template">
+        <h3>Programació de la situació d’aprenentatge</h3>
+        <div class="sa-template-grid">
+          <div class="sa-template-card"><strong>Títol</strong>${item.title}</div>
+          <div class="sa-template-card"><strong>Curs</strong>${courseLabel}</div>
+          <div class="sa-template-card"><strong>Matèria</strong>Matemàtiques</div>
+          <div class="sa-template-card"><strong>Nivell de treball</strong>N${currentLevel ? currentLevel() : 1}</div>
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Descripció i repte</h4>
+          <p>${contextDescriptionForCurrentSA()}</p>
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Competències específiques treballades</h4>
+          ${list(cur.ce)}
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Tractament de les competències transversals</h4>
+          ${transversalCompetenciesHTML()}
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Objectius d’aprenentatge</h4>
+          <p class="small-note">Formulats amb capacitat, saber i finalitat.</p>
+          <ul>${objectives.map(o => `<li>${o}</li>`).join("")}</ul>
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Criteris d’avaluació de la situació</h4>
+          <p class="small-note">Formulats amb acció, saber i context.</p>
+          <ul>${criteria.map(c => `<li>${c}</li>`).join("")}</ul>
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Sabers</h4>
+          ${list(cur.sabers, "saber")}
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Desenvolupament, recursos i metodologia</h4>
+          <ul>
+            <li><strong>Estructura:</strong> comprensió del context, introducció de dades, càlcul, anàlisi, justificació i conclusió.</li>
+            <li><strong>Recursos:</strong> dispositiu amb l’eina, llibreta o dossier de treball, calculadora si cal i debat oral.</li>
+            <li><strong>Metodologia:</strong> treball individual, per parelles o en petit grup, amb posada en comú final.</li>
+            <li><strong>Atenció a la diversitat:</strong> ús dels nivells N1-N4 per graduar complexitat, representació i autonomia.</li>
+          </ul>
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Activitats d’aprenentatge i d’avaluació</h4>
+          <div class="activity-flow">
+            <article><strong>Inicials: què en sabem?</strong><br>Activar coneixements previs, interpretar el context i anticipar quines dades seran necessàries.</article>
+            <article><strong>Desenvolupament: aprenem nous continguts</strong><br>Introduir estratègies, càlculs, representacions i relacions matemàtiques implicades.</article>
+            <article><strong>Estructuració: què hem après?</strong><br>Ordenar el procediment, revisar errors, comparar estratègies i sintetitzar el model utilitzat.</article>
+            <article><strong>Aplicació: apliquem el que hem après</strong><br>Justificar una decisió, formular una conclusió i aplicar el raonament a una situació semblant.</article>
+          </div>
+        </div>
+
+        <div class="sa-template-section">
+          <h4>Vectors educatius</h4>
+          ${vectorsHTML()}
+        </div>
       </section>
     `;
   }
@@ -526,7 +719,7 @@
     try{
       const item = currentItem();
       const res = item.calc(currentLevel());
-      res.extra = res.extra + curriculumHTML() + formalRubricHTML(currentSAKey()) + actionsHTML();
+      res.extra = res.extra + curriculumHTML() + saTemplateHTML() + formalRubricHTML(currentSAKey()) + actionsHTML();
       render(res);
     }catch(err){
       error(err.message);
@@ -638,7 +831,7 @@
       .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.kpi,.proc,.curriculum-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px;break-inside:avoid}
       .kpi strong{display:block;color:#1e3a8a;font-size:17px}table{width:100%;border-collapse:collapse;margin:8px 0;break-inside:avoid}th,td{border:1px solid #cbd5e1;padding:6px;text-align:left;vertical-align:top}th{background:#eff6ff;color:#1e3a8a}
       .code-pill{display:inline-flex;min-width:55px;justify-content:center;border-radius:999px;background:#1e40af;color:white;padding:2px 6px;font-size:12px;font-weight:800}.code-pill.saber{background:#047857}.code-pill.criteri{background:#b45309}.numbered-item{display:flex;gap:7px;margin:4px 0;break-inside:avoid}.formal-rubric{margin-top:12px;padding:10px;border:1px solid #bfdbfe;border-radius:12px;background:#f8fbff;break-inside:avoid}.rubric-tag{display:inline-flex;border-radius:999px;padding:1px 5px;color:white;font-weight:900;font-size:11px}.rubric-tag.na{background:#b91c1c}.rubric-tag.as{background:#b45309}.rubric-tag.an{background:#047857}.rubric-tag.ae{background:#1e40af}.rubric-table.formal td:nth-child(2){background:#fef2f2}.rubric-table.formal td:nth-child(3){background:#fff7ed}.rubric-table.formal td:nth-child(4){background:#f0fdf4}.rubric-table.formal td:nth-child(5){background:#ecfdf5}.report-actions,button{display:none!important}
-    </style></head><body><header class="print-header"><h1>${title}</h1><div>Matemàtiques ESO · Situacions i eines</div></header>${html}<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),350));<\/script></body></html>`;
+    </style></head><body><header class="print-header"><h1>${title}</h1><div>Informe de situació d’aprenentatge</div></header>${html}<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),350));<\/script></body></html>`;
     const w=window.open("","_blank"); if(!w){alert("El navegador ha bloquejat la finestra d’impressió.");return;} w.document.open(); w.document.write(doc); w.document.close();
   }
 
@@ -679,6 +872,6 @@
   else init();
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=13").catch(console.warn));
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=14").catch(console.warn));
   }
 })();
