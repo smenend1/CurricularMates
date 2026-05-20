@@ -802,7 +802,7 @@
   }
 
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=8").catch(console.warn));
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=9").catch(console.warn));
   }
 })();
 
@@ -883,104 +883,350 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 })();
 
 
-/* V8: exportació d'informe a PDF amb finestra imprimible */
+/* V9: exportació visual completa a PDF */
 (function(){
   "use strict";
 
-  function currentReportText(){
-    // Preferim l'informe numerat generat per v7 si existeix al DOM com a text copiable.
-    // Si no podem accedir a variables internes, construïm un informe a partir del resultat visible.
-    const result = document.getElementById("result");
-    if(!result) return "No hi ha cap resultat disponible.";
-
-    const title = result.querySelector("h2")?.innerText || "Informe de matemàtiques";
-    const summary = result.querySelector("p")?.innerText || "";
-    const steps = Array.from(result.querySelectorAll(".proc li")).map((li, i) => `${i+1}. ${li.innerText}`);
-    const codes = Array.from(result.querySelectorAll(".numbered-item")).map(item => "- " + item.innerText.replace(/\s+/g, " ").trim());
-    const conclusion = document.getElementById("student-conclusion")?.value?.trim() || "(pendent d’escriure)";
-
-    return [
-      "Matemàtiques ESO · Informe",
-      "",
-      title,
-      "",
-      "Resum:",
-      summary,
-      "",
-      codes.length ? "Connexió curricular:" : "",
-      ...codes,
-      "",
-      steps.length ? "Procediment:" : "",
-      ...steps,
-      "",
-      "Conclusió de l’alumne o grup:",
-      conclusion
-    ].filter(line => line !== "").join("\n");
-  }
-
   function escapeHTML(text){
-    return String(text).replace(/[&<>"']/g, ch => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[ch]));
+    return String(text).replace(/[&<>"']/g, function(ch){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
+    });
   }
 
-  function exportPDF(){
-    const text = currentReportText();
+  function sanitizeClone(root){
+    const clone = root.cloneNode(true);
+
+    clone.querySelectorAll(".report-actions, #copy-status, #v7-copy-status, button").forEach(function(el){
+      el.remove();
+    });
+
+    const originalCanvas = root.querySelectorAll("canvas");
+    const clonedCanvas = clone.querySelectorAll("canvas");
+
+    clonedCanvas.forEach(function(canvas, i){
+      try{
+        const img = document.createElement("img");
+        img.src = originalCanvas[i].toDataURL("image/png");
+        img.alt = canvas.getAttribute("aria-label") || "Gràfica";
+        img.className = "print-canvas-img";
+        canvas.replaceWith(img);
+      }catch(err){
+        const fallback = document.createElement("div");
+        fallback.className = "print-warning";
+        fallback.textContent = "La gràfica no s'ha pogut inserir al PDF.";
+        canvas.replaceWith(fallback);
+      }
+    });
+
+    return clone.innerHTML;
+  }
+
+  function collectReportHTML(){
+    const result = document.getElementById("result");
+    if(!result) return "<p>No hi ha cap informe generat.</p>";
+    return sanitizeClone(result);
+  }
+
+  function collectStudentConclusion(){
+    const conclusion = document.getElementById("student-conclusion")?.value?.trim();
+    if(!conclusion) return "";
+    return '<section class="print-section"><h2>Conclusió de l’alumne o grup</h2><div class="conclusion-box">' +
+      escapeHTML(conclusion).replace(/\n/g, "<br>") +
+      "</div></section>";
+  }
+
+  function printStyles(){
+    return `
+      @page { size: A4; margin: 12mm; }
+
+      * {
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #1f2937;
+        background: #ffffff;
+        line-height: 1.45;
+      }
+
+      .print-wrapper { width: 100%; }
+
+      .print-header {
+        padding: 18px 20px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+        color: #ffffff;
+        margin-bottom: 16px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .print-header h1 {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.1;
+        color: #ffffff;
+      }
+
+      .print-header p {
+        margin: 6px 0 0;
+        color: #dbeafe;
+      }
+
+      .result-card {
+        border-left: 6px solid #1d4ed8;
+        border-radius: 18px;
+        padding: 16px;
+        background: #ffffff;
+        box-shadow: none;
+      }
+
+      h2 {
+        color: #1e3a8a;
+        margin: 10px 0 8px;
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      h3 {
+        color: #1e40af;
+        margin: 14px 0 8px;
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      p { margin: 8px 0; }
+      strong { color: #111827; }
+
+      .math {
+        display: inline-block;
+        padding: 2px 6px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: Consolas, "SFMono-Regular", monospace;
+        overflow-wrap: anywhere;
+      }
+
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 12px 0;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .kpi {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 10px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .kpi span {
+        display: block;
+        color: #475569;
+        font-size: 13px;
+      }
+
+      .kpi strong {
+        display: block;
+        color: #1e3a8a;
+        font-size: 18px;
+      }
+
+      .curriculum-box {
+        margin: 12px 0;
+        padding: 12px;
+        border: 1px solid #bfdbfe;
+        border-radius: 14px;
+        background: #eff6ff;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .numbered-list {
+        display: grid;
+        gap: 6px;
+        margin: 8px 0;
+      }
+
+      .numbered-item {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .code-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 58px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: #1e40af;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 12px;
+      }
+
+      .code-pill.saber { background: #047857; }
+      .code-pill.criteri { background: #b45309; }
+
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 8px 0;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        background: #dbeafe;
+        color: #1e3a8a;
+        padding: 4px 9px;
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .proc {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 14px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      ol, ul { padding-left: 22px; }
+      li { margin: 4px 0; }
+
+      .result-table,
+      .rubric-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .result-table th,
+      .result-table td,
+      .rubric-table th,
+      .rubric-table td {
+        border: 1px solid #cbd5e1;
+        padding: 7px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .result-table th,
+      .rubric-table th {
+        background: #eff6ff;
+        color: #1e3a8a;
+      }
+
+      .canvas-wrap {
+        width: 100%;
+        margin: 12px 0;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .print-canvas-img {
+        display: block;
+        max-width: 100%;
+        width: 100%;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        background: #ffffff;
+      }
+
+      .conclusion-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 12px;
+        min-height: 48px;
+      }
+
+      .print-section {
+        margin-top: 16px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .small-note,
+      .debug-note {
+        color: #475569;
+        font-size: 13px;
+      }
+
+      .error { color: #b91c1c; }
+
+      .print-footer {
+        margin-top: 18px;
+        padding-top: 8px;
+        border-top: 1px solid #e2e8f0;
+        color: #64748b;
+        font-size: 12px;
+      }
+
+      @media print {
+        html, body { width: 210mm; }
+        .result-card, .curriculum-box, .proc, .kpi, .result-table, .rubric-table, .print-section {
+          break-inside: avoid;
+        }
+      }
+    `;
+  }
+
+  function exportVisualPDF(){
+    const html = collectReportHTML();
+    const conclusion = collectStudentConclusion();
     const now = new Date().toLocaleString("ca-ES");
-    const html = `<!doctype html>
+
+    const doc = `<!doctype html>
 <html lang="ca">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Informe Matemàtiques ESO</title>
-  <style>
-    @page { size: A4; margin: 16mm; }
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #1f2937;
-      line-height: 1.45;
-      margin: 0;
-    }
-    h1 {
-      color: #1e3a8a;
-      border-bottom: 2px solid #bfdbfe;
-      padding-bottom: 8px;
-      margin: 0 0 12px;
-    }
-    .meta {
-      color: #475569;
-      font-size: 13px;
-      margin-bottom: 18px;
-    }
-    pre {
-      white-space: pre-wrap;
-      font: inherit;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 14px;
-    }
-    .hint {
-      margin-top: 16px;
-      color: #475569;
-      font-size: 12px;
-    }
-    @media print {
-      .hint { display: none; }
-    }
-  </style>
+  <style>${printStyles()}</style>
 </head>
 <body>
-  <h1>Informe Matemàtiques ESO</h1>
-  <div class="meta">Generat: ${escapeHTML(now)}</div>
-  <pre>${escapeHTML(text)}</pre>
-  <p class="hint">Per exportar: tria “Imprimeix” i selecciona “Desa com a PDF”.</p>
+  <main class="print-wrapper">
+    <header class="print-header">
+      <h1>Informe Matemàtiques ESO</h1>
+      <p>Exportació visual de la situació o fitxa docent</p>
+    </header>
+
+    <section class="result-card">
+      ${html}
+    </section>
+
+    ${conclusion}
+
+    <footer class="print-footer">
+      Generat: ${escapeHTML(now)} · Matemàtiques ESO · Situacions i eines
+    </footer>
+  </main>
+
   <script>
-    window.addEventListener("load", () => {
-      setTimeout(() => window.print(), 250);
+    window.addEventListener("load", function(){
+      setTimeout(function(){ window.print(); }, 500);
     });
   <\/script>
 </body>
@@ -991,30 +1237,37 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
       alert("El navegador ha bloquejat la finestra d’exportació. Permet finestres emergents per aquesta pàgina.");
       return;
     }
+
     printWindow.document.open();
-    printWindow.document.write(html);
+    printWindow.document.write(doc);
     printWindow.document.close();
   }
 
   function addPDFButtons(){
-    document.querySelectorAll(".report-actions").forEach(actions => {
-      if(actions.querySelector("#v8-export-pdf")) return;
+    document.querySelectorAll(".report-actions").forEach(function(actions){
+      const old = actions.querySelector("#v8-export-pdf");
+      if(old) old.remove();
+
+      if(actions.querySelector("#v9-export-pdf")) return;
+
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.id = "v8-export-pdf";
-      btn.textContent = "Exportar informe a PDF";
-      btn.addEventListener("click", exportPDF);
+      btn.id = "v9-export-pdf";
+      btn.textContent = "Exportar PDF visual";
+      btn.addEventListener("click", exportVisualPDF);
       actions.appendChild(btn);
     });
   }
 
-  document.addEventListener("click", event => {
-    if(event.target?.id === "v8-export-pdf") exportPDF();
+  document.addEventListener("click", function(event){
+    if(event.target?.id === "v9-export-pdf"){
+      exportVisualPDF();
+    }
   });
 
-  // Quan es genera un resultat o fitxa, afegim el botó PDF a les accions.
-  const observer = new MutationObserver(() => addPDFButtons());
-  window.addEventListener("DOMContentLoaded", () => {
+  const observer = new MutationObserver(function(){ addPDFButtons(); });
+
+  window.addEventListener("DOMContentLoaded", function(){
     const result = document.getElementById("result");
     if(result) observer.observe(result, {childList:true, subtree:true});
     addPDFButtons();

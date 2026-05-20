@@ -1,10 +1,10 @@
 "use strict";
-const CACHE_NAME = "matematiques-eso-pwa-v8";
+const CACHE_NAME = "matematiques-eso-pwa-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=8",
-  "./app.js?v=8",
+  "./styles.css?v=9",
+  "./app.js?v=9",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",

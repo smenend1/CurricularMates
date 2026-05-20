@@ -1,28 +1,25 @@
-# Matemàtiques ESO · Situacions i eines v8
+# Matemàtiques ESO · Situacions i eines v9
 
 ## Novetat principal
 
-La v8 afegeix exportació d’informes a PDF.
+La v9 millora l’exportació a PDF.
 
-Quan es genera una situació o una fitxa docent, apareix el botó:
+Ara el botó **Exportar PDF visual** no exporta només text pla, sinó que intenta conservar:
 
-- **Exportar informe a PDF**
+- quadres de resultat;
+- colors;
+- taules;
+- rúbriques;
+- connexió curricular numerada;
+- badges i codis CE/CA/Sabers;
+- gràfiques canvas convertides a imatge PNG.
 
-El botó obre una versió imprimible de l’informe. Des del navegador es pot triar:
+## Ús
 
-- **Imprimeix**
-- **Desa com a PDF**
+1. Genera una situació o fitxa docent.
+2. Clica **Exportar PDF visual**.
+3. Al diàleg d’impressió, tria **Desa com a PDF**.
 
-## Android
+## Nota
 
-A Chrome per Android:
-
-1. Genera l’informe.
-2. Toca **Exportar informe a PDF**.
-3. Al quadre d’impressió, tria **Desa com a PDF**.
-4. Desa el fitxer.
-
-## Notes tècniques
-
-No s’utilitza cap llibreria externa.  
-L’exportació funciona amb `window.print()`, que és més compatible amb GitHub Pages i PWA.
+L’exportació continua usant el sistema d’impressió del navegador (`window.print()`), però ara clona el contingut visual complet del resultat i hi aplica CSS propi d’impressió.

@@ -1,7 +1,7 @@
 {
-  "name": "Matemàtiques ESO · Situacions i eines v8",
+  "name": "Matemàtiques ESO · Situacions i eines v9",
   "short_name": "Mates ESO",
-  "description": "PWA educativa de Matemàtiques ESO amb mode docent, numeració curricular i exportació d’informes a PDF.",
+  "description": "PWA educativa de Matemàtiques ESO amb exportació visual completa d’informes a PDF.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -88,3 +88,9 @@ textarea{width:100%;font:inherit;border-radius:12px;border:1px solid var(--slate
     box-shadow:none !important;
   }
 }
+
+/* v9-print-export */
+@media print{
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
