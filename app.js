@@ -872,6 +872,309 @@
   else init();
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=14").catch(console.warn));
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=15").catch(console.warn));
   }
+})();
+
+
+/* Format d'informe visual tipus situació d'aprenentatge */
+(function(){
+  "use strict";
+
+  function $(id){ return document.getElementById(id); }
+  function esc(text){
+    return String(text ?? "").replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[ch]));
+  }
+
+  function getCourseLabel(){
+    try{
+      const select = $("sa-course");
+      return select?.selectedOptions?.[0]?.textContent?.trim() || "ESO";
+    }catch{return "ESO";}
+  }
+
+  function getSituationTitle(){
+    try{
+      const select = $("sa-select");
+      return select?.selectedOptions?.[0]?.textContent?.trim() || document.querySelector("#result h2")?.textContent?.trim() || "Situació d’aprenentatge";
+    }catch{return "Situació d’aprenentatge";}
+  }
+
+  function getSubject(){
+    return "Matemàtiques";
+  }
+
+  function getResultText(){
+    const result = $("result");
+    const summary = result?.querySelector(":scope > p")?.innerText?.trim() || "";
+    const steps = Array.from(result?.querySelectorAll(".proc li") || []).map(li => li.innerText.trim());
+    const kpis = Array.from(result?.querySelectorAll(".kpi") || []).map(k => k.innerText.trim().replace(/\n+/g, ": "));
+    return {summary, steps, kpis};
+  }
+
+  function section(title, body){
+    return `<section class="sa-card"><h2>${title}</h2>${body}</section>`;
+  }
+
+  function pill(text){
+    return `<span class="pill">${esc(text)}</span>`;
+  }
+
+  function inferProduct(title){
+    const t = title.toLowerCase();
+    if(t.includes("esmorzar")) return "Proposta de compra justificada amb pressupost, cost per alumne i conclusió de viabilitat.";
+    if(t.includes("aula")) return "Proposta d’organització de l’aula amb càlculs d’espai, escala i justificació.";
+    if(t.includes("enquesta")) return "Informe breu d’anàlisi de dades amb mesures estadístiques i conclusió.";
+    if(t.includes("recepta")) return "Recepta adaptada amb quantitats proporcionals i justificació d’unitats.";
+    if(t.includes("ruta")) return "Planificació d’una ruta amb distància real, temps total i decisió de viabilitat.";
+    if(t.includes("pressupost")) return "Repartiment justificat del pressupost amb percentatges i imports.";
+    if(t.includes("tarifes")) return "Recomanació raonada de tarifa segons consum i modelització funcional.";
+    if(t.includes("competició")) return "Proposta d’organització temporal d’una competició amb partits, torns i recursos.";
+    if(t.includes("notícia")) return "Anàlisi crítica d’una notícia amb dades i redacció d’una conclusió rigorosa.";
+    if(t.includes("jardí")) return "Disseny justificat d’un espai rectangular amb àrea, cost i model d’optimització.";
+    if(t.includes("pagament")) return "Decisió financera raonada comparant pagament ajornat i immediat.";
+    if(t.includes("altura")) return "Estimació d’una altura mitjançant trigonometria i valoració d’errors.";
+    return "Informe amb càlculs, justificació i conclusió final.";
+  }
+
+  function inferDescription(title){
+    const t = title.toLowerCase();
+    if(t.includes("esmorzar")) return "El grup ha d’organitzar un esmorzar saludable amb un pressupost limitat. Cal calcular costos, aplicar descomptes i decidir si la proposta és assumible.";
+    if(t.includes("aula")) return "Es planteja reorganitzar un espai de l’aula. Cal analitzar mesures, ocupació i escala per proposar una distribució viable.";
+    if(t.includes("enquesta")) return "Es parteix d’un conjunt de dades proper al grup. Cal ordenar-les, calcular mesures estadístiques i interpretar-les.";
+    if(t.includes("recepta")) return "S’ha d’adaptar una recepta a un nombre diferent de persones aplicant proporcionalitat i mantenint unitats coherents.";
+    if(t.includes("ruta")) return "Cal planificar una ruta a partir d’un mapa, transformant distàncies i estimant el temps necessari.";
+    if(t.includes("pressupost")) return "El grup reparteix un pressupost entre partides i ha de justificar si la distribució és coherent.";
+    if(t.includes("tarifes")) return "Es comparen dues opcions amb quota fixa i cost variable. Cal modelitzar-les i decidir quina convé segons el consum.";
+    if(t.includes("competició")) return "S’ha d’organitzar una competició tenint en compte equips, pistes, partits i temps disponible.";
+    if(t.includes("notícia")) return "Es revisa una notícia amb dades numèriques per valorar-ne la interpretació i evitar conclusions enganyoses.";
+    if(t.includes("jardí")) return "Es dissenya un espai rectangular amb condicions de perímetre i cost. Cal modelitzar i justificar la proposta.";
+    if(t.includes("pagament")) return "Es comparen dues formes de pagament i cal valorar el cost final i la decisió més responsable.";
+    if(t.includes("altura")) return "Es vol estimar una altura inaccessible amb distància, angle i trigonometria, valorant possibles errors.";
+    return "La situació planteja un repte contextualitzat que requereix càlcul, representació, justificació i conclusió.";
+  }
+
+  function collectCurricularPills(){
+    const codes = Array.from(document.querySelectorAll("#result .code-pill"))
+      .map(x => x.textContent.trim())
+      .filter(Boolean);
+    const unique = [...new Set(codes)];
+    return unique.length ? unique : ["1.1","1.2","2.1","3.1","6.1"];
+  }
+
+  function collectListFromResult(selector){
+    return Array.from(document.querySelectorAll(selector)).map(x => x.innerText.trim()).filter(Boolean);
+  }
+
+  function rubricRows(){
+    const rows = Array.from(document.querySelectorAll("#result .rubric-table.formal tbody tr"));
+    if(rows.length){
+      return rows.map(tr => Array.from(tr.children).map(td => td.innerText.trim()));
+    }
+    return [
+      ["Anàlisi de la necessitat i definició del repte", "Mostra evidències molt parcials; necessita molta guia.", "Resol de manera bàsica amb alguna justificació.", "Analitza la situació amb coherència i evidència suficient.", "Integra anàlisi, autonomia i justificació aprofundida."],
+      ["Ideació, planificació i gestió del procés", "Planificació poc clara o incompleta.", "Planifica amb suport i segueix una proposta bàsica.", "Organitza el procés amb fases i criteris.", "Gestiona el procés amb autonomia i capacitat de millora."],
+      ["Proposta matemàtica, resultats i viabilitat", "La proposta és poc viable o amb errors importants.", "La proposta és parcialment viable.", "La proposta és viable i ben justificada.", "La proposta és completa, transferible i ben argumentada."],
+      ["Comunicació, justificació i millora", "Comunica poc el procés i la conclusió.", "Comunica la solució de manera bàsica.", "Comunica i justifica amb claredat.", "Integra justificació, revisió i millora amb profunditat."]
+    ];
+  }
+
+  function greenReportHTML(){
+    const title = getSituationTitle();
+    const course = getCourseLabel();
+    const subject = getSubject();
+    const result = getResultText();
+    const product = inferProduct(title);
+    const description = inferDescription(title);
+    const conclusion = $("student-conclusion")?.value?.trim() || "[pendent de completar]";
+    const criteriaCodes = collectCurricularPills();
+    const objectiveItems = collectListFromResult("#result .sa-template-section:nth-of-type(4) li");
+    const saberItems = collectListFromResult("#result .sa-template-section:nth-of-type(6) .numbered-item");
+    const development = result.steps.length ? result.steps : ["Comprensió del repte.", "Càlcul i representació.", "Justificació.", "Conclusió final."];
+
+    return `
+      <article class="green-report">
+        <section class="cover-block">
+          <div class="vertical-label">PROGRAMACIÓ DE LA SITUACIÓ D’APRENENTATGE</div>
+          <div class="cover-main">
+            <h1>SA · ${esc(title)}</h1>
+            <p class="driving-question">${esc(description)}</p>
+            <div class="top-grid">
+              <div class="info-card"><span>CURS</span><strong>${esc(course)}</strong></div>
+              <div class="info-card"><span>MATÈRIA</span><strong>${esc(subject)}</strong></div>
+            </div>
+            <div class="soft-card"><h2>Descripció, context i repte</h2><p>${esc(description)}</p></div>
+            <div class="soft-card"><h2>Producte final</h2><p>${esc(product)}</p></div>
+          </div>
+        </section>
+
+        ${section("Competències específiques", `
+          <ul>
+            <li>CE1: Identificar, analitzar i resoldre problemes matemàtics contextualitzats.</li>
+            <li>CE2: Argumentar i justificar procediments, resultats i decisions.</li>
+            <li>CE6: Connectar els sabers matemàtics amb situacions reals i altres àmbits.</li>
+            <li>CE7: Comunicar i representar idees matemàtiques amb llenguatge adequat.</li>
+          </ul>`)}
+
+        ${section("Tractament de les competències transversals", `
+          <ul>
+            <li>Competència digital: ús de recursos digitals per calcular, representar, documentar i revisar.</li>
+            <li>Competència personal, social i d’aprendre a aprendre: planificació, revisió del procés i millora progressiva.</li>
+            <li>Competència ciutadana: presa de decisions raonada en contextos propers.</li>
+            <li>Competència emprenedora: proposta d’alternatives viables i justificades.</li>
+          </ul>`)}
+
+        ${section("Objectius d’aprenentatge", `
+          <ul>${(objectiveItems.length ? objectiveItems : [
+            "Analitzar una situació contextualitzada per identificar dades, relacions i finalitat.",
+            "Aplicar sabers matemàtics per obtenir resultats útils i coherents.",
+            "Justificar la resposta amb vocabulari matemàtic, evidències i proposta de millora."
+          ]).map(x => `<li>${esc(x)}</li>`).join("")}</ul>`)}
+
+        ${section("Criteris d’avaluació de la situació", `
+          <ul>
+            <li>Anàlisi de la necessitat o repte i definició de les dades rellevants.</li>
+            <li>Ideació, planificació i gestió del procés de resolució.</li>
+            <li>Proposta matemàtica, resultats i valoració de la viabilitat.</li>
+            <li>Comunicació, justificació i millora a partir d’evidències.</li>
+          </ul>`)}
+
+        ${section("Criteris curriculars vinculats", `
+          <div class="criteria-pills">${criteriaCodes.map(pill).join("")}</div>`)}
+
+        ${section("Sabers", `
+          <ul>${(saberItems.length ? saberItems : [
+            "Càlcul, mesura, representació i interpretació segons el context.",
+            "Ús de models, relacions, taules o gràfics quan siguin pertinents.",
+            "Documentació del procés, justificació de decisions i conclusions."
+          ]).map(x => `<li>${esc(x)}</li>`).join("")}</ul>`)}
+
+        ${section("Desenvolupament de la situació d’aprenentatge", `
+          <ul>${development.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`)}
+
+        <section class="activity-grid">
+          <div class="activity-card"><h2>Activitats inicials</h2><p>Observació del context, detecció de necessitats, conversa inicial sobre què se sap i formulació del repte.</p></div>
+          <div class="activity-card"><h2>Activitats de desenvolupament</h2><p>Cerca o introducció de dades, càlculs, representacions, simulacions o proves segons la situació.</p></div>
+          <div class="activity-card"><h2>Activitats d’estructuració</h2><p>Organització del procés, justificació de decisions, revisió de criteris i preparació d’evidències.</p></div>
+          <div class="activity-card"><h2>Activitats d’aplicació</h2><p>Presentació de la proposta, valoració de l’impacte, conclusió final i proposta de millora.</p></div>
+        </section>
+
+        ${section("Breu descripció de com s’aborden els vectors", `
+          <ul>
+            <li>Aprenentatges competencials: el repte demana aplicar sabers en una situació real o funcional.</li>
+            <li>Perspectiva de gènere: ús de rols equilibrats i comunicació inclusiva.</li>
+            <li>Universalitat del currículum: nivells i suports per facilitar l’accés i l’aprofundiment.</li>
+            <li>Qualitat de l’educació de les llengües: argumentació, documentació i comunicació clara del procés.</li>
+            <li>Ciutadania democràtica i consciència global: valoració de decisions i impacte social, econòmic o ambiental quan pertoqui.</li>
+            <li>Benestar emocional: treball cooperatiu, revisió constructiva i millora progressiva.</li>
+          </ul>`)}
+
+        ${section("Resultat i procediment", `
+          <p><strong>Resultat principal:</strong> ${esc(result.summary || "[pendent de completar]")}</p>
+          ${result.kpis.length ? `<ul>${result.kpis.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+          <p><strong>Conclusió de l’alumnat:</strong> ${esc(conclusion)}</p>`)}
+
+        <section class="evidence-section">
+          <h2>Evidències del procés de l’alumnat</h2>
+          ${["Detecto la necessitat","Defineixo requisits","Genero idees","Dissenyo la proposta","Construeixo o simulo","Provo i milloro","Valoro l’impacte","Comunico la conclusió","Matriu de decisió","Anàlisi de sostenibilitat"].map((x,i)=>`
+            <div class="evidence-card"><span>${i+1}</span><strong>${esc(x)}</strong><em>[pendent de completar]</em></div>
+          `).join("")}
+        </section>
+
+        <section class="rubric-print">
+          <h2>Rúbrica de la situació d’aprenentatge</h2>
+          <table>
+            <thead><tr><th>Ítem</th><th>Criteris</th><th>NA</th><th>AS</th><th>AN</th><th>AE</th></tr></thead>
+            <tbody>
+              ${rubricRows().map((r, i) => `
+                <tr>
+                  <td>${i+1}</td>
+                  <td>${esc(r[0] || "")}</td>
+                  <td>${esc(r[1] || "")}</td>
+                  <td>${esc(r[2] || "")}</td>
+                  <td>${esc(r[3] || "")}</td>
+                  <td>${esc(r[4] || "")}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </section>
+      </article>
+    `;
+  }
+
+  function greenPrintStyles(){
+    return `
+      @page{size:A4 landscape;margin:10mm}
+      *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+      body{margin:0;background:#f7fbf8;color:#17231c;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.38}
+      .green-report{max-width:100%;padding:0}
+      .cover-block{display:grid;grid-template-columns:70px 1fr;gap:16px;min-height:175mm;padding:8px;background:linear-gradient(90deg,#ffffff 0%,#f1fbf5 100%);break-after:page}
+      .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:900;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
+      .cover-main{display:grid;align-content:start;gap:12px}
+      h1{font-size:30px;line-height:1.05;margin:0;color:#111827}
+      h2{font-size:15px;margin:0 0 5px;color:#0f6b42}
+      .driving-question{font-size:18px;margin:0;color:#27362f}
+      .top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+      .info-card,.soft-card,.sa-card,.activity-card,.evidence-card{background:#fff;border:1px solid #d7e5dc;border-radius:18px;box-shadow:0 12px 30px rgba(15,80,50,.08);padding:14px;break-inside:avoid}
+      .info-card span{display:block;color:#0f6b42;font-weight:900;font-size:12px}.info-card strong{font-size:18px}
+      .soft-card{background:#edfbf2}
+      .sa-card{margin:12px 0;padding:16px}
+      ul{margin:0;padding-left:20px}.sa-card li{margin:5px 0}
+      .criteria-pills{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-flex;border:1px solid #f1d38a;background:#fff8db;color:#855d00;border-radius:999px;padding:5px 9px;font-weight:800}
+      .activity-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}.activity-card{min-height:105px}
+      .evidence-section{break-before:page;display:grid;grid-template-columns:repeat(5,1fr);gap:12px;background:#effaf3;padding:16px;border-radius:18px}
+      .evidence-section h2{grid-column:1/-1}
+      .evidence-card{min-height:118px;display:flex;flex-direction:column;gap:8px}
+      .evidence-card span{display:inline-flex;width:28px;height:28px;border-radius:8px;background:#0f6b42;color:#fff;align-items:center;justify-content:center;font-weight:900}
+      .evidence-card em{color:#66756c}
+      .rubric-print{break-before:page;background:#fff;padding:12px;border-radius:16px}
+      .rubric-print h2{font-size:24px;color:#111827;margin:0 0 12px}
+      table{width:100%;border-collapse:collapse;font-size:12px}
+      th,td{border:1px solid #bdd7c7;padding:7px;vertical-align:top}
+      th{background:#dcf7e7;color:#0f6b42}
+      td:nth-child(1){font-weight:900;color:#0f6b42;text-align:center}
+      td:nth-child(3){background:#fff}
+      td:nth-child(4){background:#fffdf2}
+      td:nth-child(5){background:#f1fbf5}
+      td:nth-child(6){background:#e7f8ef}
+      .report-actions,button{display:none!important}
+      @media print{.sa-card,.activity-card,.evidence-card,.soft-card,.info-card{break-inside:avoid}}
+    `;
+  }
+
+  function exportGreenReport(){
+    const doc = `<!doctype html><html lang="ca"><head><meta charset="utf-8"><title>Informe de situació d’aprenentatge</title><style>${greenPrintStyles()}</style></head><body>${greenReportHTML()}<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),400));<\/script></body></html>`;
+    const w = window.open("", "_blank");
+    if(!w){ alert("El navegador ha bloquejat la finestra d’impressió."); return; }
+    w.document.open();
+    w.document.write(doc);
+    w.document.close();
+  }
+
+  function ensureGreenButton(){
+    const result = $("result");
+    if(!result) return;
+    const actions = result.querySelector(".report-actions");
+    if(!actions || actions.querySelector("#export-green-report")) return;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "export-green-report";
+    btn.textContent = "Exportar informe format SA";
+    btn.addEventListener("click", exportGreenReport);
+    actions.prepend(btn);
+  }
+
+  const observer = new MutationObserver(ensureGreenButton);
+  window.addEventListener("DOMContentLoaded", () => {
+    const result = $("result");
+    if(result) observer.observe(result,{childList:true,subtree:true});
+    ensureGreenButton();
+  });
+
+  document.addEventListener("click", ev => {
+    if(ev.target?.id === "export-green-report") exportGreenReport();
+  });
 })();

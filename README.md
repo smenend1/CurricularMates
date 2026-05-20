@@ -1,23 +1,15 @@
 # Situacions d’aprenentatge de Matemàtiques ESO
 
-## Canvis aplicats
+## Format d’informe
 
-- S’ha afegit una plantilla completa de programació de la situació d’aprenentatge.
-- L’informe inclou:
-  - títol, curs i matèria;
-  - descripció i repte;
-  - competències específiques;
-  - competències transversals;
-  - objectius d’aprenentatge;
-  - criteris d’avaluació;
-  - sabers;
-  - desenvolupament, recursos i metodologia;
-  - activitats inicials, de desenvolupament, d’estructuració i d’aplicació;
-  - vectors educatius;
-  - rúbrica d’avaluació en format quadre.
+S’ha afegit una exportació visual específica amb un format de situació d’aprenentatge semblant al document de mostra:
 
-## Impressió
+- portada amb títol, curs, matèria, descripció i producte final;
+- blocs arrodonits amb verd suau;
+- competències, objectius, criteris, sabers i desenvolupament;
+- activitats inicials, de desenvolupament, d’estructuració i d’aplicació;
+- vectors educatius;
+- evidències del procés;
+- rúbrica final en taula amb NA, AS, AN i AE.
 
-La impressió exporta el contingut visual complet de l’informe generat, amb quadres, colors, taules, connexió curricular, plantilla de situació i rúbrica final.
-
-No apareixen referències a versions, noms interns de l’eina ni mencions normatives visibles dins l’informe.
+L’informe exportat no mostra versions, noms interns de l’eina ni referències normatives explícites.

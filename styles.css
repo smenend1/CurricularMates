@@ -159,3 +159,28 @@ textarea{width:100%;font:inherit;border-radius:12px;border:1px solid var(--slate
     page-break-inside:avoid;
   }
 }
+
+/* sa-green-print-format */
+.print-preview-note{
+  margin:.75rem 0;
+  padding:.75rem;
+  border:1px solid #bbf7d0;
+  border-radius:14px;
+  background:#f0fdf4;
+  color:#14532d;
+}
+.sa-template,
+.formal-rubric,
+.curriculum-box{
+  border-color:#d1e7dc;
+}
+.export-actions-info{
+  font-size:.92rem;
+  color:#475569;
+}
+@media print{
+  *{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+}
