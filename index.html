@@ -8,8 +8,8 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=5">
-  <title>Matemàtiques ESO · Situacions i eines v5</title>
+  <link rel="stylesheet" href="./styles.css?v=6">
+  <title>Matemàtiques ESO · Situacions i eines v6</title>
 </head>
 <body>
   <header class="app-header">
@@ -19,11 +19,12 @@
   </header>
   <nav class="tabs" aria-label="Navegació principal">
     <button type="button" class="tab active" data-view="home">Inici</button>
-    <button class="tab" data-view="courses">Cursos</button>
-    <button class="tab" data-view="situations">SA</button>
-    <button class="tab" data-view="tools">Eines</button>
-    <button class="tab" data-view="formulas">Fórmules</button>
-    <button class="tab" data-view="assessment">Autoavaluació</button>
+    <button type="button" class="tab" data-view="courses">Cursos</button>
+    <button type="button" class="tab" data-view="situations">SA</button>
+    <button type="button" class="tab" data-view="tools">Eines</button>
+    <button type="button" class="tab" data-view="formulas">Fórmules</button>
+    <button type="button" class="tab" data-view="assessment">Autoavaluació</button>
+      <button type="button" class="tab" data-view="teacher">Docent</button>
   </nav>
   <main>
     <section id="home" class="view active">
@@ -49,6 +50,7 @@
           <label>Nivell<select id="sa-level"><option value="1">Nivell 1 · entendre i calcular</option><option value="2">Nivell 2 · representar i comparar</option><option value="3">Nivell 3 · modelitzar i justificar</option><option value="4">Nivell 4 · crear proposta pròpia</option></select></label>
         </div>
         <div id="sa-inputs" class="dynamic-inputs"></div>
+        <label class="wide">Conclusió de l’alumne o grup<textarea id="student-conclusion" rows="4" placeholder="Escriu aquí la decisió, justificació o conclusió final..."></textarea></label>
         <button type="submit" id="sa-submit">Calcular situació</button>
       </form>
     </section>
@@ -73,9 +75,34 @@
         <button type="submit" id="assessment-submit">Avaluar procés</button>
       </form>
     </section>
+
+    <section id="teacher" class="view">
+      <div class="section-head">
+        <img src="./assets/sentits.png" alt="Fitxa docent i mapa curricular">
+        <div>
+          <p class="eyebrow">Mode docent</p>
+          <h2>Fitxa curricular i guia d’aula</h2>
+          <p>Genera una fitxa docent per a cada situació: curs recomanat, sentits, sabers, competències, preguntes guia, criteris i rúbrica.</p>
+        </div>
+      </div>
+      <form id="teacher-form" action="javascript:void(0)" class="panel form-grid">
+        <label>Situació<select id="teacher-sa"></select></label>
+        <label>Curs o nivell
+          <select id="teacher-course">
+            <option value="1eso">1r ESO</option>
+            <option value="2eso">2n ESO</option>
+            <option value="3eso">3r ESO</option>
+            <option value="4eso">4t ESO</option>
+            <option value="multi">Multinivell</option>
+          </select>
+        </label>
+        <button type="submit" id="teacher-submit">Generar fitxa docent</button>
+      </form>
+    </section>
+
     <section class="result-section" aria-live="polite"><div id="result" class="result-card"><h2>Resultat i procediment</h2><p>Tria un curs, situació, eina o fórmula per començar.</p></div></section>
   </main>
-  <footer><p>Matemàtiques ESO · Situacions i eines v5. PWA offline quan queda guardada en memòria cau.</p></footer>
-  <script src="./app.js?v=5" defer></script>
+  <footer><p>Matemàtiques ESO · Situacions i eines v6. PWA offline quan queda guardada en memòria cau.</p></footer>
+  <script src="./app.js?v=6" defer></script>
 </body>
 </html>

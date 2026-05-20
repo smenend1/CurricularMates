@@ -1,40 +1,28 @@
-# Matemàtiques ESO · Situacions i eines v5
+# Matemàtiques ESO · Situacions i eines v6
 
-Versió corregida perquè els nivells de les situacions d’aprenentatge tinguin accions diferents.
+Versió orientada al docent.
 
-## Correcció principal de la v5
+## Novetats
 
-A la v4 el selector de nivell existia, però el càlcul era pràcticament el mateix independentment del nivell.  
-A la v5 cada situació té comportament diferent segons:
+- Mode docent.
+- Fitxa curricular per cada situació.
+- Connexió amb sentits matemàtics.
+- Sabers mobilitzats.
+- Competències i processos.
+- Preguntes guia.
+- Evidències d’aprenentatge.
+- Criteris d’observació.
+- Rúbrica breu.
+- Conclusió de l’alumne o grup.
+- Botó per copiar informe.
 
-- **Nivell 1**: entendre i calcular.
-- **Nivell 2**: representar i comparar.
-- **Nivell 3**: modelitzar i justificar.
-- **Nivell 4**: crear proposta pròpia o prendre decisions.
+## Ús recomanat
 
-## Exemples
+1. Ves a **SA**.
+2. Tria situació i nivell.
+3. Omple les dades.
+4. Escriu la conclusió de l’alumne o grup.
+5. Calcula.
+6. Copia l’informe com a evidència.
 
-### Organitzem una excursió
-
-- Nivell 1: cost total i pressupost.
-- Nivell 2: percentatges de despeses i comparació.
-- Nivell 3: model del cost segons nombre d’alumnes.
-- Nivell 4: proposta de decisió i descompte necessari.
-
-### Comparem tarifes
-
-- Nivell 1: calcula costos.
-- Nivell 2: dibuixa gràfica comparativa.
-- Nivell 3: modelitza i troba el punt d’igualtat.
-- Nivell 4: compara perfils de consum.
-
-### Enquesta
-
-- Nivell 1: mitjana, mediana, moda i rang.
-- Nivell 2: taula de freqüències.
-- Nivell 3: interpretació respecte la mitjana.
-- Nivell 4: possible biaix o valors extrems.
-
-## Notes d’actualització
-
-En pujar a GitHub Pages, recorda esborrar memòria cau o desinstal·lar la PWA anterior si el navegador continua carregant la versió antiga.
+A l’apartat **Docent** pots generar una fitxa curricular per preparar o justificar l’activitat.
