@@ -1,19 +1,23 @@
-# Matemàtiques ESO · Situacions i eines v10
+# Matemàtiques ESO · Situacions i eines v11
 
-## Novetats
+## Correcció principal
 
-- Més situacions d’aprenentatge per curs.
-- Tres SA per a 1r, 2n, 3r i 4t d’ESO.
-- Rúbrica imprimible.
-- Exportació PDF visual complet amb capçalera compacta.
-- Les SA tenen nivells N1-N4: càlcul, representació, modelització i decisió.
+La v10 podia donar aquest error en algunes SA noves:
 
-## Ús
+`Cannot read properties of undefined (reading 'map')`
 
-1. Tria curs.
-2. Tria situació.
-3. Tria nivell.
-4. Omple dades.
-5. Escriu conclusió.
-6. Calcula.
-7. Imprimeix rúbrica o exporta PDF visual.
+La causa era que les noves situacions per curs feien servir claus noves, però una capa curricular anterior encara buscava les claus antigues.
+
+## Canvis
+
+- S'ha desactivat la capa antiga que provocava l'error.
+- S'ha afegit una connexió curricular segura per a totes les SA noves.
+- Les SA de v10 es mantenen.
+- Es mantenen els botons:
+  - Imprimir rúbrica
+  - Exportar PDF visual complet
+- Si una SA no té dades específiques, s'usen dades curriculars genèriques segons el curs.
+
+## Recomanació
+
+En pujar a GitHub Pages, esborra la memòria cau o desinstal·la la PWA anterior per evitar que segueixi carregant la v10.

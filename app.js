@@ -47,3 +47,236 @@ function assess(){const t=$$('input[name="a"]').length,c=$$('input[name="a"]:che
 $('sa-course').addEventListener('change',fillSA);$('sa-select').addEventListener('change',fillInputs);$('sa-form').addEventListener('submit',e=>{e.preventDefault();calc()});$('tool-select').addEventListener('change',fillTools);$('tool-form').addEventListener('submit',e=>{e.preventDefault();calcTool()});$('teacher-course').addEventListener('change',fillTeacher);$('teacher-form').addEventListener('submit',e=>{e.preventDefault();teacherSheet()});$('assessment-form').addEventListener('submit',e=>{e.preventDefault();assess()});fillSA();fillTools();fillTeacher();
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=10').catch(console.warn));
 })();
+
+
+/* V11: correcció SA per curs i connexió curricular segura */
+(function(){
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+
+  const GENERIC_BY_COURSE = {
+    "1eso": {
+      ce: [["CE1","Interpretar, modelitzar i resoldre situacions."],["CE7","Comunicar i representar resultats."],["CE8","Autoregulació i revisió del procés."]],
+      ca: [["CA1.1","Interpretar la situació i organitzar dades."],["CA1.4","Obtenir solucions matemàtiques."],["CA7.2","Explicar procediments i resultats."]],
+      s: [["SN-OPE","Operacions amb nombres i mesures."],["SM-MES","Mesura, magnituds i unitats."],["SSO-REV","Revisió del procés i perseverança."]]
+    },
+    "2eso": {
+      ce: [["CE1","Interpretar, modelitzar i resoldre situacions."],["CE2","Argumentar la idoneïtat de les solucions."],["CE6","Connectar matemàtiques amb la realitat."]],
+      ca: [["CA1.3","Seleccionar eines i estratègies."],["CA2.1","Justificar processos i conclusions."],["CA6.1","Reconèixer matemàtiques en contextos reals."]],
+      s: [["SN-PRO","Proporcionalitat, percentatges i fraccions."],["SM-ESC","Escales, unitats i magnituds."],["SSO-DEC","Presa de decisions raonada."]]
+    },
+    "3eso": {
+      ce: [["CE1","Interpretar, modelitzar i resoldre situacions."],["CE5","Connectar representacions matemàtiques."],["CE7","Comunicar i representar resultats."]],
+      ca: [["CA1.2","Representar situacions amb expressions, taules o gràfics."],["CA5.2","Relacionar conceptes en situacions contextualitzades."],["CA7.1","Representar funcions, dades o resultats."]],
+      s: [["SA-FUN","Funcions, relacions i models."],["SET-DAD","Dades, variació i interpretació crítica."],["SN-OPE","Operacions i comparació de quantitats."]]
+    },
+    "4eso": {
+      ce: [["CE1","Interpretar, modelitzar i resoldre situacions."],["CE2","Argumentar la idoneïtat de les solucions."],["CE6","Vincular matemàtiques amb decisions reals."]],
+      ca: [["CA1.3","Triar estratègies de modelització."],["CA2.1","Justificar la validesa de la solució."],["CA6.1","Aplicar matemàtiques a contextos reals."]],
+      s: [["SA-MOD","Modelització algebraica i funcional."],["SM-MES","Mesura i estimació."],["SSO-DEC","Presa de decisions i valoració d’errors."]]
+    }
+  };
+
+  const SPECIFIC = {
+    classroom: {
+      title: "Organitzem l’aula",
+      ce: [["CE1","Interpretar i resoldre una situació espacial."],["CE7","Representar mesures i resultats."],["CE8","Revisar si la distribució és viable."]],
+      ca: [["CA1.1","Identificar dades i magnituds."],["CA1.4","Calcular àrea, perímetre i espai disponible."],["CA7.1","Representar l’espai amb mesures i escala."]],
+      s: [["SM-MES","Àrea, perímetre, unitats i magnituds."],["SE-ESC","Escales i representació de l’espai."],["SN-OPE","Operacions amb decimals i mesures."]]
+    },
+    market: {
+      title: "Comprem per a un esmorzar saludable",
+      ce: [["CE1","Resoldre una situació de pressupost."],["CE2","Justificar la viabilitat de la compra."],["CE7","Comunicar el resultat." ]],
+      ca: [["CA1.1","Organitzar costos i dades."],["CA1.4","Calcular totals, descomptes i cost per alumne."],["CA2.1","Justificar si el pressupost és suficient."]],
+      s: [["SN-OPE","Decimals, diners i percentatges."],["SM-MAG","Magnitud diner i comparació de quantitats."],["SSO-DEC","Presa de decisions responsable."]]
+    },
+    survey1: {
+      title: "Enquesta ràpida del grup",
+      ce: [["CE1","Interpretar dades d’una situació."],["CE7","Representar i comunicar dades."],["CE9","Treballar dades de manera cooperativa."]],
+      ca: [["CA1.1","Interpretar dades."],["CA7.1","Organitzar dades en taules."],["CA9.1","Cooperar en la interpretació."]],
+      s: [["SET-DAD","Recollida i organització de dades."],["SET-MES","Mitjana, mediana i rang."],["SET-GRA","Taules de freqüències."]]
+    },
+    recipe: {
+      title: "Adaptem una recepta",
+      ce: [["CE1","Aplicar proporcionalitat a una situació real."],["CE2","Justificar arrodoniments."],["CE6","Connectar matemàtiques i vida quotidiana."]],
+      ca: [["CA1.3","Seleccionar proporcionalitat com a estratègia."],["CA1.4","Obtenir quantitats ajustades."],["CA2.1","Justificar resultats i unitats."]],
+      s: [["SN-PRO","Proporcionalitat directa."],["SN-OPE","Operacions amb fraccions i decimals."],["SM-MES","Unitats de massa i capacitat."]]
+    },
+    map: {
+      title: "Planifiquem una ruta amb mapa",
+      ce: [["CE1","Resoldre una situació de distància i temps."],["CE6","Connectar matemàtiques amb orientació i mobilitat."],["CE7","Comunicar resultats amb unitats."]],
+      ca: [["CA1.2","Representar la situació amb escala."],["CA1.4","Calcular distància i temps."],["CA6.1","Reconèixer matemàtiques en mapes."]],
+      s: [["SM-ESC","Escales i distàncies."],["SM-MAG","Temps, velocitat i unitats."],["SN-PRO","Relacions proporcionals."]]
+    },
+    budget: {
+      title: "Repartim el pressupost d’un projecte",
+      ce: [["CE1","Resoldre un repartiment percentual."],["CE2","Justificar si el repartiment és coherent."],["CE7","Comunicar imports i percentatges."]],
+      ca: [["CA1.1","Organitzar dades del pressupost."],["CA1.4","Calcular percentatges i imports."],["CA2.1","Justificar decisions de repartiment."]],
+      s: [["SN-PER","Percentatges."],["SN-OPE","Operacions amb diners."],["SSO-DEC","Decisions i criteris de priorització."]]
+    },
+    tariffs3: {
+      title: "Comparem tarifes amb funcions",
+      ce: [["CE1","Modelitzar una situació amb funcions."],["CE2","Justificar la millor opció."],["CE7","Representar i comunicar funcions."]],
+      ca: [["CA1.2","Representar amb expressions i gràfics."],["CA1.4","Calcular costos i punt d’igualtat."],["CA2.1","Argumentar la decisió."]],
+      s: [["SA-FUN","Funcions lineals."],["SA-EQU","Equacions i punt de tall."],["SN-OPE","Operacions amb decimals i diners."]]
+    },
+    sport: {
+      title: "Planifiquem una competició esportiva",
+      ce: [["CE1","Resoldre un problema d’organització."],["CE3","Formular estratègies de planificació."],["CE9","Cooperar en una proposta col·lectiva."]],
+      ca: [["CA1.3","Seleccionar estratègia de recompte."],["CA3.2","Fer conjectures sobre calendari."],["CA9.1","Participar en la presa de decisions."]],
+      s: [["SN-COM","Comptatge de partits."],["SM-TEM","Temps i durada."],["SSO-EQ","Cooperació i organització."]]
+    },
+    dataNews: {
+      title: "Analitzem una notícia amb dades",
+      ce: [["CE1","Interpretar dades contextualitzades."],["CE2","Argumentar conclusions."],["CE7","Comunicar resultats críticament."]],
+      ca: [["CA1.1","Interpretar dades i context."],["CA2.1","Justificar conclusions."],["CA7.2","Comunicar amb rigor."]],
+      s: [["SET-CRI","Interpretació crítica de dades."],["SN-PER","Variació percentual."],["SET-DAD","Mostra i context."]]
+    },
+    optimization: {
+      title: "Dissenyem un jardí rectangular",
+      ce: [["CE1","Modelitzar una situació geomètrica."],["CE2","Justificar l’òptim."],["CE5","Connectar àlgebra i geometria."]],
+      ca: [["CA1.3","Seleccionar model quadràtic."],["CA2.1","Justificar l’àrea màxima."],["CA5.1","Connectar representacions."]],
+      s: [["SA-MOD","Funció quadràtica i modelització."],["SM-MES","Perímetre i àrea."],["SE-FIG","Figures planes."]]
+    },
+    loan: {
+      title: "Comparem un pagament ajornat",
+      ce: [["CE1","Modelitzar una situació financera."],["CE2","Argumentar la decisió."],["CE6","Connectar amb economia quotidiana."]],
+      ca: [["CA1.3","Aplicar percentatges compostos."],["CA2.1","Justificar la millor opció."],["CA6.1","Aplicar matemàtiques a finances."]],
+      s: [["SA-EXP","Creixement exponencial."],["SN-PER","Percentatges i interessos."],["SSO-DEC","Presa de decisions responsable."]]
+    },
+    trig: {
+      title: "Mesurem una altura amb trigonometria",
+      ce: [["CE1","Modelitzar una mesura indirecta."],["CE2","Valorar l’error de mesura."],["CE7","Comunicar procés i resultat."]],
+      ca: [["CA1.2","Representar el triangle."],["CA1.4","Calcular amb raons trigonomètriques."],["CA2.1","Justificar resultat i errors."]],
+      s: [["SM-MES","Mesura indirecta."],["SE-TRI","Triangle rectangle."],["SA-TRIG","Raons trigonomètriques."]]
+    }
+  };
+
+  function list(items, cls){
+    const safe = Array.isArray(items) ? items : [];
+    return `<div class="numbered-list">${safe.map(([c,t]) => `<div class="numbered-item"><span class="code-pill ${cls||""}">${c}</span><span>${t}</span></div>`).join("")}</div>`;
+  }
+
+  function getKey(){
+    return $("sa-select")?.value || "classroom";
+  }
+
+  function getCourse(){
+    return $("sa-course")?.value || "1eso";
+  }
+
+  function getInfo(){
+    const key = getKey();
+    const base = GENERIC_BY_COURSE[getCourse()] || GENERIC_BY_COURSE["1eso"];
+    const specific = SPECIFIC[key] || {};
+    return {
+      title: specific.title || key,
+      ce: specific.ce || base.ce,
+      ca: specific.ca || base.ca,
+      s: specific.s || base.s
+    };
+  }
+
+  function curriculumBoxSafe(){
+    const info = getInfo();
+    return `
+      <div class="curriculum-box v11-curricular">
+        <h3>Connexió curricular numerada</h3>
+        <p class="small-note">Codis CE/CA vinculats a la situació. Els codis de sabers són codificació pràctica de l’app.</p>
+        <h3>Competències específiques</h3>${list(info.ce)}
+        <h3>Criteris d’avaluació</h3>${list(info.ca, "criteri")}
+        <h3>Sabers mobilitzats</h3>${list(info.s, "saber")}
+      </div>
+    `;
+  }
+
+  function addSafeCurriculum(){
+    const result = $("result");
+    if(!result) return;
+    if(result.querySelector(".v11-curricular")) return;
+    if(result.querySelector(".error")) return;
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = curriculumBoxSafe();
+    result.appendChild(wrapper);
+  }
+
+  function ensureButtons(){
+    const result = $("result");
+    if(!result || result.querySelector(".v11-actions")) return;
+    if(result.querySelector(".error")) return;
+    const actions = document.createElement("div");
+    actions.className = "report-actions v11-actions";
+    actions.innerHTML = `
+      <button type="button" id="v11-print-rubric">Imprimir rúbrica</button>
+      <button type="button" id="v11-export-visual">Exportar PDF visual complet</button>
+    `;
+    result.appendChild(actions);
+  }
+
+  function printDoc(title, html){
+    const doc = `<!doctype html><html lang="ca"><head><meta charset="utf-8"><title>${title}</title><style>
+      @page{size:A4;margin:10mm}
+      *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}
+      body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#1f2937;line-height:1.38;margin:0}
+      .print-header{padding:10px 14px;border-radius:12px;background:#1e40af;color:white;margin-bottom:10px;break-inside:avoid}
+      .print-header h1{color:white;font-size:22px;margin:0}
+      h2,h3{color:#1e3a8a}
+      .result-card{border-left:5px solid #1d4ed8;border-radius:14px;padding:12px;background:white}
+      .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+      .kpi,.proc,.curriculum-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px;break-inside:avoid}
+      .kpi strong{display:block;color:#1e3a8a;font-size:17px}
+      table{width:100%;border-collapse:collapse;margin:8px 0;break-inside:avoid}
+      th,td{border:1px solid #cbd5e1;padding:6px;text-align:left;vertical-align:top}
+      th{background:#eff6ff;color:#1e3a8a}
+      .code-pill{display:inline-flex;min-width:55px;justify-content:center;border-radius:999px;background:#1e40af;color:white;padding:2px 6px;font-size:12px;font-weight:800}
+      .code-pill.saber{background:#047857}.code-pill.criteri{background:#b45309}
+      .numbered-item{display:flex;gap:7px;margin:4px 0;break-inside:avoid}
+      .report-actions,button{display:none!important}
+    </style></head><body><header class="print-header"><h1>${title}</h1><div>Matemàtiques ESO · Situacions i eines</div></header>${html}<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),350));<\/script></body></html>`;
+    const w = window.open("", "_blank");
+    if(!w){ alert("El navegador ha bloquejat la finestra d’impressió."); return; }
+    w.document.open(); w.document.write(doc); w.document.close();
+  }
+
+  function rubricHTML(){
+    return `<section class="result-card"><h2>Rúbrica de situació d’aprenentatge</h2><table class="rubric-table">
+      <thead><tr><th>Criteri</th><th>Assolit</th><th>En procés</th><th>Cal reforç</th></tr></thead>
+      <tbody>
+        <tr><td>Comprensió</td><td>Identifica dades i pregunta.</td><td>Entén parcialment.</td><td>No identifica què es demana.</td></tr>
+        <tr><td>Estratègia</td><td>Tria eines adequades.</td><td>Necessita ajuda.</td><td>No sap quina eina usar.</td></tr>
+        <tr><td>Càlcul</td><td>Calcula i revisa.</td><td>Hi ha petits errors.</td><td>Càlculs incoherents.</td></tr>
+        <tr><td>Representació</td><td>Usa taules, gràfics o fórmules.</td><td>Representa parcialment.</td><td>No representa clarament.</td></tr>
+        <tr><td>Justificació</td><td>Explica i decideix.</td><td>Justifica poc.</td><td>Només dona resultat.</td></tr>
+        <tr><td>Conclusió</td><td>Clara i contextualitzada.</td><td>Breu però comprensible.</td><td>No respon al problema.</td></tr>
+      </tbody>
+    </table></section>`;
+  }
+
+  function cloneResult(){
+    const result = $("result");
+    if(!result) return "<p>No hi ha cap resultat.</p>";
+    const clone = result.cloneNode(true);
+    clone.querySelectorAll(".report-actions, button").forEach(el => el.remove());
+    return `<section class="result-card">${clone.innerHTML}</section>`;
+  }
+
+  document.addEventListener("submit", ev => {
+    if(ev.target?.id !== "sa-form") return;
+    setTimeout(() => {
+      addSafeCurriculum();
+      ensureButtons();
+    }, 120);
+  }, true);
+
+  document.addEventListener("click", ev => {
+    if(ev.target?.id === "v11-print-rubric"){
+      printDoc("Rúbrica de situació d’aprenentatge", rubricHTML());
+    }
+    if(ev.target?.id === "v11-export-visual"){
+      addSafeCurriculum();
+      printDoc("Informe visual complet", cloneResult());
+    }
+  });
+
+})();

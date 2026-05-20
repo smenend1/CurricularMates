@@ -1,7 +1,7 @@
 {
-  "name": "Matemàtiques ESO · Situacions i eines v10",
+  "name": "Matemàtiques ESO · Situacions i eines v11",
   "short_name": "Mates ESO",
-  "description": "PWA educativa de Matemàtiques ESO amb més SA per curs, rúbrica imprimible i PDF visual complet.",
+  "description": "PWA educativa de Matemàtiques ESO amb correcció de SA per curs i connexió curricular segura.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
