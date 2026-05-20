@@ -378,6 +378,123 @@
       </div>`;
   }
 
+
+  function currentRubricKey(){
+    return currentSAKey ? currentSAKey() : "market";
+  }
+
+  const RUBRICS = {
+    market:[
+      ["Gestió del pressupost", "No identifica correctament costos o pressupost.", "Calcula parcialment el total amb alguna ajuda.", "Calcula total, descompte i cost per alumne amb correcció.", "Justifica la viabilitat i proposa millores de pressupost."],
+      ["Ús de decimals i percentatges", "Té errors importants amb decimals o percentatges.", "Aplica alguns càlculs però amb imprecisions.", "Aplica decimals i percentatges correctament.", "Explica el significat de cada percentatge en el context."],
+      ["Interpretació del resultat", "Dona un resultat sense relacionar-lo amb el problema.", "Interpreta si el pressupost arriba o no.", "Explica diferència, cost per alumne i conseqüències.", "Formula una decisió raonada i alternativa si cal."],
+      ["Comunicació matemàtica", "La resposta és incompleta o poc clara.", "Comunica el resultat amb unitats bàsiques.", "Presenta dades, procés i conclusió ordenadament.", "Fa una justificació clara, completa i contextualitzada."]
+    ],
+    classroom:[
+      ["Mesura de l’espai", "No calcula correctament àrea o perímetre.", "Calcula alguna magnitud amb ajuda.", "Calcula àrea, perímetre i espai lliure correctament.", "Relaciona les magnituds amb una distribució viable de l’aula."],
+      ["Ús d’unitats i escala", "Confón unitats o no interpreta l’escala.", "Usa unitats parcialment correctes.", "Aplica unitats i escala amb coherència.", "Justifica el plànol i possibles errors de mesura."],
+      ["Raonament espacial", "No relaciona mesures amb ocupació real.", "Fa una estimació simple de l’espai.", "Compara espai disponible i ocupat.", "Proposa una organització funcional i ben argumentada."],
+      ["Conclusió i justificació", "No formula una conclusió útil.", "Diu si és viable però amb poca justificació.", "Justifica la viabilitat amb càlculs.", "Inclou criteris de seguretat, comoditat i ús de l’espai."]
+    ],
+    survey1:[
+      ["Organització de dades", "No ordena ni estructura les dades.", "Organitza dades de manera parcial.", "Construeix taula o resum de dades correctament.", "Presenta dades i freqüències de manera clara i verificable."],
+      ["Càlcul estadístic", "Té errors greus en mitjana, mediana o rang.", "Calcula alguna mesura correctament.", "Calcula mesures principals amb correcció.", "Interpreta diferències entre mesures i possibles valors extrems."],
+      ["Interpretació crítica", "No interpreta els resultats.", "Fa una interpretació molt bàsica.", "Relaciona resultats amb el grup o context.", "Valora representativitat, biaix i limitacions de la mostra."],
+      ["Comunicació de conclusions", "No escriu una conclusió comprensible.", "Escriu una conclusió breu.", "Comunica resultats i conclusió amb claredat.", "Redacta un informe breu, complet i crític."]
+    ],
+    recipe:[
+      ["Proporcionalitat", "No identifica la relació proporcional.", "Aplica el factor amb ajuda.", "Calcula el factor de proporcionalitat correctament.", "Justifica el model proporcional i les seves limitacions."],
+      ["Càlcul d’ingredients", "Té errors importants en les quantitats.", "Calcula alguns ingredients correctament.", "Ajusta totes les quantitats amb unitats.", "Arrodoneix de manera realista i ho justifica."],
+      ["Unitats i conversions", "Confón grams, ml o persones.", "Usa unitats amb alguna imprecisió.", "Manté unitats coherents.", "Explica com afecten les unitats a la recepta real."],
+      ["Justificació final", "No justifica la recepta adaptada.", "Dona una resposta bàsica.", "Explica l’adaptació i comprova coherència.", "Proposa una versió final aplicable i ben argumentada."]
+    ],
+    map:[
+      ["Interpretació de l’escala", "No aplica correctament l’escala.", "Calcula la distància amb ajuda.", "Converteix distància de mapa a real correctament.", "Explica l’escala i comprova si la distància és raonable."],
+      ["Càlcul de temps", "No relaciona distància, velocitat i temps.", "Fa un càlcul parcial.", "Calcula temps caminant i temps total.", "Ajusta el temps amb descansos i marge de seguretat."],
+      ["Ús d’unitats", "Barreja km, hores o minuts incorrectament.", "Usa algunes unitats correctament.", "Conserva unitats coherents.", "Transforma unitats i les explica amb precisió."],
+      ["Planificació", "No pren cap decisió pràctica.", "Fa una proposta simple.", "Proposa una ruta viable.", "Justifica horari, ritme, descansos i possibles imprevistos."]
+    ],
+    budget:[
+      ["Repartiment percentual", "No calcula correctament els percentatges.", "Calcula alguna partida amb ajuda.", "Calcula totes les partides del pressupost.", "Comprova suma i ajusta el repartiment si cal."],
+      ["Control del pressupost", "No detecta incoherències.", "Detecta alguna diferència.", "Comprova que el repartiment sigui coherent.", "Proposa una redistribució justificada."],
+      ["Interpretació econòmica", "No relaciona imports amb decisions.", "Interpreta algunes partides.", "Explica la importància de cada partida.", "Argumenta prioritats segons objectius del projecte."],
+      ["Comunicació", "Presenta resultats desordenats.", "Comunica imports bàsics.", "Presenta una taula clara i conclusió.", "Redacta una justificació formal del pressupost."]
+    ],
+    tariffs3:[
+      ["Modelització funcional", "No escriu correctament les funcions.", "Identifica algunes parts de la funció.", "Modelitza les dues tarifes com a funcions lineals.", "Interpreta pendent, quota fixa i punt de tall."],
+      ["Resolució i comparació", "No calcula correctament els costos.", "Compara amb algun error.", "Calcula costos i millor opció.", "Analitza diversos consums i canvis de decisió."],
+      ["Punt d’igualtat", "No entén el punt de tall.", "L’identifica amb ajuda.", "Calcula o interpreta el punt d’igualtat.", "Justifica la decisió segons perfils de consum."],
+      ["Representació i comunicació", "No representa ni explica el procés.", "Explica parcialment.", "Comunica gràfica, càlculs i conclusió.", "Presenta una recomanació clara i contextualitzada."]
+    ],
+    sport:[
+      ["Recompte de partits", "No aplica cap estratègia de recompte.", "Compta parcialment els partits.", "Calcula correctament el nombre de partits.", "Justifica la fórmula o estratègia de recompte."],
+      ["Organització temporal", "No calcula la durada total.", "Fa una estimació simple.", "Calcula torns, pistes i durada.", "Optimitza calendari segons recursos disponibles."],
+      ["Modelització", "No relaciona equips i partits.", "Identifica relacions bàsiques.", "Expressa el model n(n−1)/2.", "Analitza com canvia el temps si varien equips o pistes."],
+      ["Proposta final", "No presenta calendari viable.", "Presenta una proposta incompleta.", "Proposa una organització coherent.", "Justifica una proposta realista i adaptable."]
+    ],
+    dataNews:[
+      ["Càlcul de variació", "No calcula variació absoluta o percentual.", "Calcula una variació parcial.", "Calcula variació absoluta i percentual.", "Interpreta la variació segons període i context."],
+      ["Lectura crítica", "Accepta el titular sense qüestionar-lo.", "Detecta alguna dada rellevant.", "Valora mostra, període i context.", "Identifica possibles biaixos o exageracions."],
+      ["Comunicació de dades", "Presenta resultats sense ordre.", "Comunica un resultat bàsic.", "Presenta dades i conclusió de manera clara.", "Redacta un titular rigorós i matemàticament justificat."],
+      ["Argumentació", "No justifica la interpretació.", "Justifica amb poca evidència.", "Argumenta a partir dels càlculs.", "Contrasta resultats i limita l’abast de la conclusió."]
+    ],
+    optimization:[
+      ["Modelització geomètrica", "No relaciona perímetre i dimensions.", "Fa càlculs parcials.", "Expressa llargada i àrea correctament.", "Formula el model quadràtic de l’àrea."],
+      ["Optimització", "No identifica el màxim.", "Intueix una millor opció.", "Compara àrea proposada i àrea màxima.", "Justifica per què el quadrat dona l’àrea màxima."],
+      ["Càlcul i unitats", "Té errors greus de càlcul o unitats.", "Calcula amb alguna imprecisió.", "Calcula dimensions, àrea i cost.", "Comprova resultats i interpreta unitats."],
+      ["Decisió de disseny", "No proposa cap decisió.", "Fa una proposta simple.", "Justifica el disseny amb càlculs.", "Inclou cost, ús de l’espai i limitacions."]
+    ],
+    loan:[
+      ["Interès compost", "No aplica el model d’interès.", "Aplica parcialment el càlcul.", "Calcula el pagament ajornat correctament.", "Explica el creixement compost i el seu efecte."],
+      ["Comparació d’opcions", "No compara les dues opcions.", "Compara només imports bàsics.", "Compara pagament ajornat i immediat.", "Justifica la decisió considerant cost i risc."],
+      ["Percentatges", "Té errors en interès o descompte.", "Aplica algun percentatge correctament.", "Aplica interès i descompte amb correcció.", "Interpreta com canvien els resultats si varien mesos o tipus."],
+      ["Educació financera", "No extreu cap conclusió responsable.", "Dona una conclusió simple.", "Relaciona càlculs amb una decisió econòmica.", "Argumenta una decisió responsable i contextualitzada."]
+    ],
+    trig:[
+      ["Model trigonomètric", "No identifica el triangle rectangle.", "Identifica alguns elements.", "Aplica la tangent correctament.", "Representa i justifica el model de mesura indirecta."],
+      ["Càlcul de l’altura", "No calcula correctament l’altura.", "Calcula amb alguna ajuda.", "Calcula altura amb distància, angle i ulls.", "Comprova el resultat i el compara amb una estimació."],
+      ["Ús d’unitats i angle", "Confón graus, metres o components.", "Usa unitats parcialment.", "Manté unitats coherents.", "Explica possibles errors de mesura d’angle o distància."],
+      ["Conclusió", "No comunica el resultat.", "Dona l’altura sense justificar.", "Comunica resultat i procediment.", "Inclou marge d’error i interpretació realista."]
+    ]
+  };
+
+  function formalRubricHTML(key){
+    const item = currentItem ? currentItem() : null;
+    const title = item?.title || "Situació d’aprenentatge";
+    const rows = RUBRICS[key] || [
+      ["Comprensió del problema", "No identifica dades ni pregunta.", "Identifica parcialment la situació.", "Comprèn el problema i les dades principals.", "Interpreta el context i anticipa estratègies."],
+      ["Estratègia matemàtica", "No tria una estratègia adequada.", "Tria una estratègia amb ajuda.", "Aplica una estratègia coherent.", "Selecciona i justifica l’estratègia més eficient."],
+      ["Càlcul i representació", "Els càlculs no són coherents.", "Hi ha càlculs parcials.", "Calcula i representa amb correcció.", "Comprova i relaciona diferents representacions."],
+      ["Justificació i conclusió", "No justifica la resposta.", "Dona una conclusió bàsica.", "Justifica resultat i conclusió.", "Argumenta de forma completa i contextualitzada."]
+    ];
+    return `
+      <section class="formal-rubric">
+        <h3>Rúbrica LOMLOE de la SA: ${title}</h3>
+        <p class="small-note">Nivells d’assoliment: NA, AS, AN i AE. La valoració ha de tenir en compte el procés, la justificació i la comunicació matemàtica, no només el resultat numèric.</p>
+        <div class="rubric-levels">
+          <span><span class="rubric-tag na">NA</span>&nbsp; No assolit</span>
+          <span><span class="rubric-tag as">AS</span>&nbsp; Assoliment satisfactori</span>
+          <span><span class="rubric-tag an">AN</span>&nbsp; Assoliment notable</span>
+          <span><span class="rubric-tag ae">AE</span>&nbsp; Assoliment excel·lent</span>
+        </div>
+        <table class="rubric-table formal">
+          <thead>
+            <tr>
+              <th>Criteri</th>
+              <th><span class="rubric-tag na">NA</span></th>
+              <th><span class="rubric-tag as">AS</span></th>
+              <th><span class="rubric-tag an">AN</span></th>
+              <th><span class="rubric-tag ae">AE</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join("")}
+          </tbody>
+        </table>
+      </section>
+    `;
+  }
+
   function actionsHTML(){
     return `<div class="report-actions">
       <button type="button" id="print-rubric">Imprimir rúbrica</button>
@@ -409,7 +526,7 @@
     try{
       const item = currentItem();
       const res = item.calc(currentLevel());
-      res.extra = res.extra + curriculumHTML() + actionsHTML();
+      res.extra = res.extra + curriculumHTML() + formalRubricHTML(currentSAKey()) + actionsHTML();
       render(res);
     }catch(err){
       error(err.message);
@@ -503,14 +620,7 @@
   }
 
   function rubricHTML(){
-    return `<h3>Rúbrica breu</h3><table class="rubric-table"><thead><tr><th>Criteri</th><th>Assolit</th><th>En procés</th><th>Cal reforç</th></tr></thead><tbody>
-      <tr><td>Comprensió</td><td>Identifica dades i pregunta.</td><td>Entén parcialment.</td><td>No identifica què es demana.</td></tr>
-      <tr><td>Estratègia</td><td>Tria eines adequades.</td><td>Necessita ajuda.</td><td>No sap quina eina usar.</td></tr>
-      <tr><td>Càlcul</td><td>Calcula i revisa.</td><td>Hi ha petits errors.</td><td>Càlculs incoherents.</td></tr>
-      <tr><td>Representació</td><td>Usa taules, gràfics o fórmules.</td><td>Representa parcialment.</td><td>No representa clarament.</td></tr>
-      <tr><td>Justificació</td><td>Explica i decideix.</td><td>Justifica poc.</td><td>Només dona resultat.</td></tr>
-      <tr><td>Conclusió</td><td>Clara i contextualitzada.</td><td>Breu però comprensible.</td><td>No respon al problema.</td></tr>
-    </tbody></table>`;
+    return formalRubricHTML(currentSAKey());
   }
 
   function assess(event){
@@ -527,7 +637,7 @@
       .print-header h1{color:white;font-size:22px;margin:0}h2,h3{color:#1e3a8a}.result-card{border-left:5px solid #1d4ed8;border-radius:14px;padding:12px;background:white}
       .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.kpi,.proc,.curriculum-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px;break-inside:avoid}
       .kpi strong{display:block;color:#1e3a8a;font-size:17px}table{width:100%;border-collapse:collapse;margin:8px 0;break-inside:avoid}th,td{border:1px solid #cbd5e1;padding:6px;text-align:left;vertical-align:top}th{background:#eff6ff;color:#1e3a8a}
-      .code-pill{display:inline-flex;min-width:55px;justify-content:center;border-radius:999px;background:#1e40af;color:white;padding:2px 6px;font-size:12px;font-weight:800}.code-pill.saber{background:#047857}.code-pill.criteri{background:#b45309}.numbered-item{display:flex;gap:7px;margin:4px 0;break-inside:avoid}.report-actions,button{display:none!important}
+      .code-pill{display:inline-flex;min-width:55px;justify-content:center;border-radius:999px;background:#1e40af;color:white;padding:2px 6px;font-size:12px;font-weight:800}.code-pill.saber{background:#047857}.code-pill.criteri{background:#b45309}.numbered-item{display:flex;gap:7px;margin:4px 0;break-inside:avoid}.formal-rubric{margin-top:12px;padding:10px;border:1px solid #bfdbfe;border-radius:12px;background:#f8fbff;break-inside:avoid}.rubric-tag{display:inline-flex;border-radius:999px;padding:1px 5px;color:white;font-weight:900;font-size:11px}.rubric-tag.na{background:#b91c1c}.rubric-tag.as{background:#b45309}.rubric-tag.an{background:#047857}.rubric-tag.ae{background:#1e40af}.rubric-table.formal td:nth-child(2){background:#fef2f2}.rubric-table.formal td:nth-child(3){background:#fff7ed}.rubric-table.formal td:nth-child(4){background:#f0fdf4}.rubric-table.formal td:nth-child(5){background:#ecfdf5}.report-actions,button{display:none!important}
     </style></head><body><header class="print-header"><h1>${title}</h1><div>Matemàtiques ESO · Situacions i eines</div></header>${html}<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),350));<\/script></body></html>`;
     const w=window.open("","_blank"); if(!w){alert("El navegador ha bloquejat la finestra d’impressió.");return;} w.document.open(); w.document.write(doc); w.document.close();
   }
@@ -569,6 +679,6 @@
   else init();
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=12").catch(console.warn));
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=13").catch(console.warn));
   }
 })();

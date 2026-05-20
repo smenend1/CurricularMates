@@ -1,7 +1,7 @@
 {
-  "name": "Matemàtiques ESO · Situacions i eines v12",
+  "name": "Matemàtiques ESO · Situacions i eines v13",
   "short_name": "Mates ESO",
-  "description": "PWA educativa de Matemàtiques ESO amb motor net, SA per curs, connexió curricular i exportació PDF.",
+  "description": "PWA educativa de Matemàtiques ESO amb rúbriques LOMLOE específiques per SA amb nivells NA, AS, AN i AE.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

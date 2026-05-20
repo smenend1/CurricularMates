@@ -1,21 +1,25 @@
-# Matemàtiques ESO · Situacions i eines v12
+# Matemàtiques ESO · Situacions i eines v13
 
-## Correcció important
+## Novetat principal
 
-La v12 reescriu el motor JavaScript per eliminar completament els listeners antics que provocaven l’error:
+La v13 afegeix rúbriques formals LOMLOE específiques per a cada situació d’aprenentatge.
 
-`Cannot read properties of undefined (reading 'map')`
+Cada informe de SA incorpora al final una rúbrica amb els nivells:
 
-## Canvis
+- **NA**: No assolit
+- **AS**: Assoliment satisfactori
+- **AN**: Assoliment notable
+- **AE**: Assoliment excel·lent
 
-- Motor únic per a les SA per curs.
-- Sense cap capa antiga interferint.
-- Connexió curricular segura per cada SA.
-- Rúbrica imprimible.
-- Exportació PDF visual.
-- Eines bàsiques conservades.
-- Mode docent funcional.
+## Característiques
 
-## Recomanació
+- Rúbrica diferent segons la SA concreta.
+- Com a mínim 4 criteris per situació.
+- Format en quadre.
+- Colors diferenciats per nivell.
+- La rúbrica s’adjunta al final de l’informe.
+- La rúbrica també apareix en l’exportació PDF visual.
 
-En pujar a GitHub Pages, desinstal·la la PWA anterior o esborra la memòria cau del lloc.
+## Notes
+
+La rúbrica valora el procés competencial: comprensió, estratègia, càlcul, representació, justificació i conclusió.

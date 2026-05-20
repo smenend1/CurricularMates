@@ -15,3 +15,72 @@ textarea{width:100%;font:inherit;border-radius:12px;border:1px solid var(--slate
 .copy-ok{color:var(--green);font-weight:800;margin-top:.5rem}
 .small-note{font-size:.92rem;color:var(--slate-600);margin:.4rem 0}
 @media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
+
+/* v13-lomloe-rubrics */
+.formal-rubric{
+  margin-top:1.2rem;
+  padding:1rem;
+  border:1px solid #bfdbfe;
+  border-radius:16px;
+  background:#f8fbff;
+}
+.formal-rubric h3{
+  margin-top:0;
+  color:#1e3a8a;
+}
+.rubric-levels{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  margin:.65rem 0;
+}
+.rubric-levels span{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:.25rem .55rem;
+  background:#e0e7ff;
+  color:#1e3a8a;
+  font-weight:800;
+  font-size:.85rem;
+}
+.rubric-table.formal th{
+  background:#dbeafe;
+}
+.rubric-table.formal td:nth-child(2){
+  background:#fef2f2;
+}
+.rubric-table.formal td:nth-child(3){
+  background:#fff7ed;
+}
+.rubric-table.formal td:nth-child(4){
+  background:#f0fdf4;
+}
+.rubric-table.formal td:nth-child(5){
+  background:#ecfdf5;
+}
+.rubric-tag{
+  display:inline-flex;
+  border-radius:999px;
+  padding:.12rem .45rem;
+  color:white;
+  font-weight:900;
+  font-size:.76rem;
+}
+.rubric-tag.na{background:#b91c1c}
+.rubric-tag.as{background:#b45309}
+.rubric-tag.an{background:#047857}
+.rubric-tag.ae{background:#1e40af}
+@media print{
+  .formal-rubric{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+  .rubric-table.formal{
+    break-inside:auto;
+  }
+  .rubric-table.formal tr{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+}
