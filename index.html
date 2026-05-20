@@ -4,105 +4,77 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#1e40af">
-  <meta name="description" content="Matemàtiques ESO: situacions d’aprenentatge, eines, fórmules i autoavaluació.">
+  <meta name="description" content="Matemàtiques ESO: situacions d’aprenentatge per curs, eines, mode docent i PDF visual.">
   <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=9">
-  <title>Matemàtiques ESO · Situacions i eines v9</title>
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./styles.css?v=10">
+  <title>Matemàtiques ESO · Situacions i eines v10</title>
 </head>
 <body>
-  <header class="app-header">
-    <p class="eyebrow">PWA educativa</p>
-    <h1>Matemàtiques ESO</h1>
-    <p class="subtitle">Situacions d’aprenentatge amb càlcul real, eines, fórmules i gràfiques per 1r, 2n, 3r i 4t d’ESO.</p>
-  </header>
-  <nav class="tabs" aria-label="Navegació principal">
-    <button type="button" class="tab active" data-view="home">Inici</button>
-    <button type="button" class="tab" data-view="courses">Cursos</button>
-    <button type="button" class="tab" data-view="situations">SA</button>
-    <button type="button" class="tab" data-view="tools">Eines</button>
-    <button type="button" class="tab" data-view="formulas">Fórmules</button>
-    <button type="button" class="tab" data-view="assessment">Autoavaluació</button>
-      <button type="button" class="tab" data-view="teacher">Docent</button>
-  </nav>
-  <main>
-    <section id="home" class="view active">
-      <div class="hero-grid">
-        <article class="panel"><img src="./assets/situacions.png" alt="Situacions d’aprenentatge"><h2>App nova basada en la base estable</h2><p>Aquesta versió reorganitza la calculadora cap a una app curricular: contextos reals, eines, procediments, representació i comprovació.</p></article>
-        <article class="panel"><img src="./assets/sentits.png" alt="Sentits matemàtics"><h2>Per tot l’ESO</h2><p>Inclou cursos, sentits matemàtics, situacions d’aprenentatge, eines interactives i autoavaluació.</p></article>
+<header class="app-header">
+  <p class="eyebrow">PWA educativa</p>
+  <h1>Matemàtiques ESO</h1>
+  <p class="subtitle">Situacions d’aprenentatge per curs, càlcul guiat, mode docent, rúbrica i exportació PDF visual.</p>
+</header>
+<nav class="tabs" aria-label="Navegació principal">
+  <button type="button" class="tab active" data-view="home">Inici</button>
+  <button type="button" class="tab" data-view="situations">SA</button>
+  <button type="button" class="tab" data-view="tools">Eines</button>
+  <button type="button" class="tab" data-view="teacher">Docent</button>
+  <button type="button" class="tab" data-view="assessment">Autoavaluació</button>
+</nav>
+<main>
+  <section id="home" class="view active">
+    <div class="hero-grid">
+      <article class="panel"><img src="./assets/situacions.png" alt="Situacions"><h2>Situacions diferents segons curs</h2><p>Aquesta versió organitza les SA per 1r, 2n, 3r i 4t d’ESO, amb nivells de càlcul, representació, modelització i decisió.</p></article>
+      <article class="panel"><img src="./assets/sentits.png" alt="Currículum"><h2>Ús docent</h2><p>Cada SA inclou competències, criteris, sabers codificats, rúbrica imprimible i informe visual exportable a PDF.</p></article>
+    </div>
+  </section>
+  <section id="situations" class="view">
+    <div class="section-head"><img src="./assets/situacions.png" alt="SA"><div><p class="eyebrow">Situacions d’aprenentatge</p><h2>Treball per curs</h2><p>Tria curs, situació i nivell. Les dades són editables i el resultat inclou procediment i connexió curricular.</p></div></div>
+    <form id="sa-form" class="panel" action="javascript:void(0)">
+      <div class="form-grid">
+        <label>Curs<select id="sa-course"><option value="1eso">1r ESO</option><option value="2eso">2n ESO</option><option value="3eso">3r ESO</option><option value="4eso">4t ESO</option></select></label>
+        <label>Situació<select id="sa-select"></select></label>
+        <label>Nivell<select id="sa-level"><option value="1">N1 · entendre i calcular</option><option value="2">N2 · representar i comparar</option><option value="3">N3 · modelitzar i justificar</option><option value="4">N4 · crear proposta pròpia</option></select></label>
       </div>
-      <div class="grid cards-3">
-        <button type="button" class="card action-card" data-jump="courses"><strong>Entrar per curs</strong><span>1r, 2n, 3r o 4t d’ESO.</span></button>
-        <button type="button" class="card action-card" data-jump="situations"><strong>Entrar per situació</strong><span>Excursions, tarifes, dades i disseny.</span></button>
-        <button type="button" class="card action-card" data-jump="tools"><strong>Entrar per eina</strong><span>Equacions, gràfiques, geometria i estadística.</span></button>
-      </div>
-    </section>
-    <section id="courses" class="view">
-      <div class="section-head"><img src="./assets/cursos.png" alt="Cursos ESO"><div><p class="eyebrow">Itineraris</p><h2>Treball per cursos</h2><p>Selecciona un curs per veure sabers clau, eines recomanades i situacions apropiades.</p></div></div>
-      <form id="course-form" action="javascript:void(0)" class="panel form-grid"><label>Curs<select id="course-select"></select></label><button type="submit" id="course-submit">Veure itinerari</button></form>
-    </section>
-    <section id="situations" class="view">
-      <div class="section-head"><img src="./assets/situacions.png" alt="Situacions d’aprenentatge"><div><p class="eyebrow">SA mare</p><h2>Situacions d’aprenentatge</h2><p>Escenaris típics i adaptables per treballar molts supòsits matemàtics.</p></div></div>
-      <form id="sa-form" action="javascript:void(0)" class="panel">
-        <div class="form-grid">
-          <label>Situació<select id="sa-select"></select></label>
-          <label>Nivell<select id="sa-level"><option value="1">Nivell 1 · entendre i calcular</option><option value="2">Nivell 2 · representar i comparar</option><option value="3">Nivell 3 · modelitzar i justificar</option><option value="4">Nivell 4 · crear proposta pròpia</option></select></label>
-        </div>
-        <div id="sa-inputs" class="dynamic-inputs"></div>
-        <label class="wide">Conclusió de l’alumne o grup<textarea id="student-conclusion" rows="4" placeholder="Escriu aquí la decisió, justificació o conclusió final..."></textarea></label>
-        <button type="submit" id="sa-submit">Calcular situació</button>
-      </form>
-    </section>
-    <section id="tools" class="view">
-      <div class="section-head"><img src="./assets/eines.png" alt="Eines matemàtiques"><div><p class="eyebrow">Motor d’ajuda</p><h2>Eines matemàtiques</h2><p>Calculadores guiades amb entrades robustes, procediment i comprovació.</p></div></div>
-      <form id="tool-form" action="javascript:void(0)" class="panel"><div class="form-grid"><label>Eina<select id="tool-select"><option value="linear">Equació lineal</option><option value="quadratic">Equació quadràtica</option><option value="proportion">Proporcionalitat</option><option value="percentage">Percentatges</option><option value="geometry">Geometria bàsica</option><option value="statistics">Estadística bàsica</option><option value="graph">Gràfica de funció</option></select></label></div><div id="tool-inputs" class="dynamic-inputs"></div><button type="submit" id="tool-submit">Calcular</button></form>
-    </section>
-    <section id="formulas" class="view">
-      <div class="section-head"><img src="./assets/grafiques.png" alt="Representacions matemàtiques"><div><p class="eyebrow">Consulta ràpida</p><h2>Fórmules i conceptes</h2><p>Compendi inicial connectat amb l’app de situacions.</p></div></div>
-      <form id="formula-form" action="javascript:void(0)" class="panel form-grid"><label>Àrea<select id="formula-area"></select></label><label>Fórmula<select id="formula-item"></select></label><button type="submit" id="formula-submit">Mostrar</button></form>
-    </section>
-    <section id="assessment" class="view">
-      <div class="section-head"><img src="./assets/autoavaluacio.png" alt="Autoavaluació"><div><p class="eyebrow">Reflexió</p><h2>Autoavaluació competencial</h2><p>Checklist per revisar si el procés matemàtic és complet.</p></div></div>
-      <form id="assessment-form" action="javascript:void(0)" class="panel checklist">
-        <label><input type="checkbox" name="a"> He entès l’enunciat i el context.</label>
-        <label><input type="checkbox" name="a"> He identificat les dades i les unitats.</label>
-        <label><input type="checkbox" name="a"> He triat una estratègia matemàtica adequada.</label>
-        <label><input type="checkbox" name="a"> He representat el problema amb taula, gràfica, esquema o fórmula.</label>
-        <label><input type="checkbox" name="a"> He fet els càlculs i he revisat errors.</label>
-        <label><input type="checkbox" name="a"> He comprovat si el resultat té sentit.</label>
-        <label><input type="checkbox" name="a"> He escrit una conclusió clara.</label>
-        <button type="submit" id="assessment-submit">Avaluar procés</button>
-      </form>
-    </section>
-
-    <section id="teacher" class="view">
-      <div class="section-head">
-        <img src="./assets/sentits.png" alt="Fitxa docent i mapa curricular">
-        <div>
-          <p class="eyebrow">Mode docent</p>
-          <h2>Fitxa curricular i guia d’aula</h2>
-          <p>Genera una fitxa docent per a cada situació: curs recomanat, sentits, sabers, competències, preguntes guia, criteris i rúbrica.</p>
-        </div>
-      </div>
-      <form id="teacher-form" action="javascript:void(0)" class="panel form-grid">
-        <label>Situació<select id="teacher-sa"></select></label>
-        <label>Curs o nivell
-          <select id="teacher-course">
-            <option value="1eso">1r ESO</option>
-            <option value="2eso">2n ESO</option>
-            <option value="3eso">3r ESO</option>
-            <option value="4eso">4t ESO</option>
-            <option value="multi">Multinivell</option>
-          </select>
-        </label>
-        <button type="submit" id="teacher-submit">Generar fitxa docent</button>
-      </form>
-    </section>
-
-    <section class="result-section" aria-live="polite"><div id="result" class="result-card"><h2>Resultat i procediment</h2><p>Tria un curs, situació, eina o fórmula per començar.</p></div></section>
-  </main>
-  <footer><p>Matemàtiques ESO · Situacions i eines v9. PWA offline quan queda guardada en memòria cau.</p></footer>
-  <script src="./app.js?v=9" defer></script>
+      <div id="sa-inputs" class="dynamic-inputs"></div>
+      <label class="wide">Conclusió de l’alumne o grup<textarea id="student-conclusion" rows="4" placeholder="Escriu aquí la decisió, justificació o conclusió final..."></textarea></label>
+      <button type="submit">Calcular situació</button>
+    </form>
+  </section>
+  <section id="tools" class="view">
+    <div class="section-head"><img src="./assets/eines.png" alt="Eines"><div><p class="eyebrow">Eines ràpides</p><h2>Calculadores bàsiques</h2><p>Petites eines de suport per a càlculs freqüents.</p></div></div>
+    <form id="tool-form" class="panel" action="javascript:void(0)">
+      <div class="form-grid"><label>Eina<select id="tool-select"><option value="linear">Equació lineal</option><option value="quadratic">Equació quadràtica</option><option value="percent">Percentatge</option></select></label></div>
+      <div id="tool-inputs" class="dynamic-inputs"></div>
+      <button type="submit">Calcular</button>
+    </form>
+  </section>
+  <section id="teacher" class="view">
+    <div class="section-head"><img src="./assets/sentits.png" alt="Docent"><div><p class="eyebrow">Mode docent</p><h2>Fitxa curricular i rúbrica</h2><p>Genera una fitxa docent numerada i imprimeix la rúbrica.</p></div></div>
+    <form id="teacher-form" class="panel form-grid" action="javascript:void(0)">
+      <label>Curs<select id="teacher-course"><option value="1eso">1r ESO</option><option value="2eso">2n ESO</option><option value="3eso">3r ESO</option><option value="4eso">4t ESO</option></select></label>
+      <label>Situació<select id="teacher-sa"></select></label>
+      <button type="submit">Generar fitxa docent</button>
+    </form>
+  </section>
+  <section id="assessment" class="view">
+    <div class="section-head"><img src="./assets/autoavaluacio.png" alt="Autoavaluació"><div><p class="eyebrow">Reflexió</p><h2>Autoavaluació competencial</h2></div></div>
+    <form id="assessment-form" class="panel checklist" action="javascript:void(0)">
+      <label><input type="checkbox" name="a"> He entès l’enunciat i el context.</label>
+      <label><input type="checkbox" name="a"> He identificat dades i unitats.</label>
+      <label><input type="checkbox" name="a"> He triat una estratègia adequada.</label>
+      <label><input type="checkbox" name="a"> He representat o modelitzat quan calia.</label>
+      <label><input type="checkbox" name="a"> He comprovat el resultat.</label>
+      <label><input type="checkbox" name="a"> He escrit una conclusió clara.</label>
+      <button type="submit">Avaluar procés</button>
+    </form>
+  </section>
+  <section class="result-section" aria-live="polite"><div id="result" class="result-card"><h2>Resultat i procediment</h2><p>Tria una situació o una eina per començar.</p></div></section>
+</main>
+<footer><p>Matemàtiques ESO · Situacions i eines v10. PWA offline quan queda en memòria cau.</p></footer>
+<script src="./app.js?v=10" defer></script>
 </body>
 </html>
