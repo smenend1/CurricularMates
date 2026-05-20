@@ -1,28 +1,16 @@
-# Matemàtiques ESO · Situacions i eines v6
+# Matemàtiques ESO · Situacions i eines v7
 
-Versió orientada al docent.
+## Novetat principal
+S'afegeix numeració curricular a les fitxes i als resultats:
 
-## Novetats
+- CE1-CE9: competències específiques.
+- CAx.x: criteris d’avaluació vinculats.
+- Codis de sabers per sentits:
+  - SN: sentit numèric
+  - SM: sentit de la mesura
+  - SE: sentit espacial
+  - SA: sentit algebraic i pensament computacional
+  - SET: sentit estocàstic
+  - SSO: sentit socioemocional
 
-- Mode docent.
-- Fitxa curricular per cada situació.
-- Connexió amb sentits matemàtics.
-- Sabers mobilitzats.
-- Competències i processos.
-- Preguntes guia.
-- Evidències d’aprenentatge.
-- Criteris d’observació.
-- Rúbrica breu.
-- Conclusió de l’alumne o grup.
-- Botó per copiar informe.
-
-## Ús recomanat
-
-1. Ves a **SA**.
-2. Tria situació i nivell.
-3. Omple les dades.
-4. Escriu la conclusió de l’alumne o grup.
-5. Calcula.
-6. Copia l’informe com a evidència.
-
-A l’apartat **Docent** pots generar una fitxa curricular per preparar o justificar l’activitat.
+Els codis CE i CA segueixen la numeració curricular. Els codis de sabers són una codificació pràctica de l’app per facilitar la programació docent.

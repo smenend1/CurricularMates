@@ -1,7 +1,7 @@
 {
-  "name": "Matemàtiques ESO · Situacions i eines v6",
+  "name": "Matemàtiques ESO · Situacions i eines v7",
   "short_name": "Mates ESO",
-  "description": "PWA educativa per a Matemàtiques ESO amb mode docent, fitxa curricular, situacions per nivells, eines, fórmules, rúbrica i informe copiable.",
+  "description": "PWA educativa de Matemàtiques ESO amb mode docent i numeració de competències, criteris d’avaluació i sabers.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
