@@ -1,16 +1,28 @@
-# Matemàtiques ESO · Situacions i eines v7
+# Matemàtiques ESO · Situacions i eines v8
 
 ## Novetat principal
-S'afegeix numeració curricular a les fitxes i als resultats:
 
-- CE1-CE9: competències específiques.
-- CAx.x: criteris d’avaluació vinculats.
-- Codis de sabers per sentits:
-  - SN: sentit numèric
-  - SM: sentit de la mesura
-  - SE: sentit espacial
-  - SA: sentit algebraic i pensament computacional
-  - SET: sentit estocàstic
-  - SSO: sentit socioemocional
+La v8 afegeix exportació d’informes a PDF.
 
-Els codis CE i CA segueixen la numeració curricular. Els codis de sabers són una codificació pràctica de l’app per facilitar la programació docent.
+Quan es genera una situació o una fitxa docent, apareix el botó:
+
+- **Exportar informe a PDF**
+
+El botó obre una versió imprimible de l’informe. Des del navegador es pot triar:
+
+- **Imprimeix**
+- **Desa com a PDF**
+
+## Android
+
+A Chrome per Android:
+
+1. Genera l’informe.
+2. Toca **Exportar informe a PDF**.
+3. Al quadre d’impressió, tria **Desa com a PDF**.
+4. Desa el fitxer.
+
+## Notes tècniques
+
+No s’utilitza cap llibreria externa.  
+L’exportació funciona amb `window.print()`, que és més compatible amb GitHub Pages i PWA.

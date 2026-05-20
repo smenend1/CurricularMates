@@ -802,7 +802,7 @@
   }
 
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=7").catch(console.warn));
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=8").catch(console.warn));
   }
 })();
 
@@ -880,4 +880,143 @@ function initTeacher(){const sel=document.getElementById("teacher-sa"); if(sel) 
 document.addEventListener("click",e=>{if(e.target?.id==="v7-copy-report"){const st=document.getElementById("v7-copy-status"); if(navigator.clipboard&&LAST) navigator.clipboard.writeText(LAST).then(()=>{if(st)st.textContent="Informe numerat copiat."});} if(e.target?.id==="v7-show-numbering") show()});
 document.addEventListener("submit",e=>{if(e.target?.id!=="sa-form")return; setTimeout(()=>{const r=document.getElementById("result"); if(!r||r.dataset.v7==="1")return; const k=document.getElementById("sa-select")?.value||"excursion"; LAST=buildReport(k); const div=document.createElement("div"); div.innerHTML=box(k)+actions(); r.appendChild(div); r.dataset.v7="1";},100)},true);
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",initTeacher); else initTeacher();
+})();
+
+
+/* V8: exportació d'informe a PDF amb finestra imprimible */
+(function(){
+  "use strict";
+
+  function currentReportText(){
+    // Preferim l'informe numerat generat per v7 si existeix al DOM com a text copiable.
+    // Si no podem accedir a variables internes, construïm un informe a partir del resultat visible.
+    const result = document.getElementById("result");
+    if(!result) return "No hi ha cap resultat disponible.";
+
+    const title = result.querySelector("h2")?.innerText || "Informe de matemàtiques";
+    const summary = result.querySelector("p")?.innerText || "";
+    const steps = Array.from(result.querySelectorAll(".proc li")).map((li, i) => `${i+1}. ${li.innerText}`);
+    const codes = Array.from(result.querySelectorAll(".numbered-item")).map(item => "- " + item.innerText.replace(/\s+/g, " ").trim());
+    const conclusion = document.getElementById("student-conclusion")?.value?.trim() || "(pendent d’escriure)";
+
+    return [
+      "Matemàtiques ESO · Informe",
+      "",
+      title,
+      "",
+      "Resum:",
+      summary,
+      "",
+      codes.length ? "Connexió curricular:" : "",
+      ...codes,
+      "",
+      steps.length ? "Procediment:" : "",
+      ...steps,
+      "",
+      "Conclusió de l’alumne o grup:",
+      conclusion
+    ].filter(line => line !== "").join("\n");
+  }
+
+  function escapeHTML(text){
+    return String(text).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[ch]));
+  }
+
+  function exportPDF(){
+    const text = currentReportText();
+    const now = new Date().toLocaleString("ca-ES");
+    const html = `<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <title>Informe Matemàtiques ESO</title>
+  <style>
+    @page { size: A4; margin: 16mm; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #1f2937;
+      line-height: 1.45;
+      margin: 0;
+    }
+    h1 {
+      color: #1e3a8a;
+      border-bottom: 2px solid #bfdbfe;
+      padding-bottom: 8px;
+      margin: 0 0 12px;
+    }
+    .meta {
+      color: #475569;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+    pre {
+      white-space: pre-wrap;
+      font: inherit;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .hint {
+      margin-top: 16px;
+      color: #475569;
+      font-size: 12px;
+    }
+    @media print {
+      .hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Informe Matemàtiques ESO</h1>
+  <div class="meta">Generat: ${escapeHTML(now)}</div>
+  <pre>${escapeHTML(text)}</pre>
+  <p class="hint">Per exportar: tria “Imprimeix” i selecciona “Desa com a PDF”.</p>
+  <script>
+    window.addEventListener("load", () => {
+      setTimeout(() => window.print(), 250);
+    });
+  <\/script>
+</body>
+</html>`;
+
+    const printWindow = window.open("", "_blank");
+    if(!printWindow){
+      alert("El navegador ha bloquejat la finestra d’exportació. Permet finestres emergents per aquesta pàgina.");
+      return;
+    }
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+  }
+
+  function addPDFButtons(){
+    document.querySelectorAll(".report-actions").forEach(actions => {
+      if(actions.querySelector("#v8-export-pdf")) return;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "v8-export-pdf";
+      btn.textContent = "Exportar informe a PDF";
+      btn.addEventListener("click", exportPDF);
+      actions.appendChild(btn);
+    });
+  }
+
+  document.addEventListener("click", event => {
+    if(event.target?.id === "v8-export-pdf") exportPDF();
+  });
+
+  // Quan es genera un resultat o fitxa, afegim el botó PDF a les accions.
+  const observer = new MutationObserver(() => addPDFButtons());
+  window.addEventListener("DOMContentLoaded", () => {
+    const result = document.getElementById("result");
+    if(result) observer.observe(result, {childList:true, subtree:true});
+    addPDFButtons();
+  });
 })();

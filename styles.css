@@ -39,3 +39,52 @@ textarea{width:100%;font:inherit;border-radius:12px;border:1px solid var(--slate
 .code-pill{display:inline-flex;align-items:center;justify-content:center;min-width:4.5rem;padding:.18rem .45rem;border-radius:999px;background:#1e40af;color:white;font-weight:900;font-size:.82rem}
 .code-pill.saber{background:#047857}.code-pill.criteri{background:#b45309}
 .report-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0 0}.report-actions button{width:auto;min-width:180px}.copy-ok{color:var(--green);font-weight:800;margin-top:.5rem}
+
+/* v8-pdf-export */
+.print-doc{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#1f2937;
+  line-height:1.45;
+}
+.print-doc h1{
+  color:#1e3a8a;
+  border-bottom:2px solid #bfdbfe;
+  padding-bottom:.35rem;
+}
+.print-doc h2{
+  color:#1e40af;
+  margin-top:1.2rem;
+}
+.print-doc pre{
+  white-space:pre-wrap;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:1rem;
+}
+.print-doc .meta{
+  color:#475569;
+  font-size:.95rem;
+}
+@media print{
+  body{
+    background:white !important;
+  }
+  .app-header,.tabs,footer,.report-actions{
+    display:none !important;
+  }
+  main{
+    width:100% !important;
+    padding:0 !important;
+  }
+  .view{
+    display:none !important;
+  }
+  .result-section{
+    margin:0 !important;
+  }
+  .result-card{
+    border:0 !important;
+    box-shadow:none !important;
+  }
+}
