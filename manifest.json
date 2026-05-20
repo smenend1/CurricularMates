@@ -1,7 +1,7 @@
 {
   "name": "Situacions d’aprenentatge de Matemàtiques ESO",
   "short_name": "SA Matemàtiques",
-  "description": "Eina educativa per preparar, treballar, avaluar i exportar situacions d’aprenentatge de Matemàtiques a l’ESO.",
+  "description": "Eina educativa per crear, importar, treballar, avaluar i exportar situacions d’aprenentatge de Matemàtiques a l’ESO.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

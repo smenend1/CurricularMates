@@ -1,15 +1,13 @@
 # Situacions d’aprenentatge de Matemàtiques ESO
 
-## Format d’informe
+## Novetats
 
-S’ha afegit una exportació visual específica amb un format de situació d’aprenentatge semblant al document de mostra:
+- Rúbrica final amb columna d’ítem descriptiu i columna de criteris numèrics.
+- Bloc per crear situacions d’aprenentatge pròpies.
+- Importació de SA des de JSON, TXT o DOCX.
+- Les SA creades es desen al navegador i apareixen al selector de situacions.
+- L’exportació en format SA manté portada, blocs, evidències i rúbrica final.
 
-- portada amb títol, curs, matèria, descripció i producte final;
-- blocs arrodonits amb verd suau;
-- competències, objectius, criteris, sabers i desenvolupament;
-- activitats inicials, de desenvolupament, d’estructuració i d’aplicació;
-- vectors educatius;
-- evidències del procés;
-- rúbrica final en taula amb NA, AS, AN i AE.
+## Importació DOCX
 
-L’informe exportat no mostra versions, noms interns de l’eina ni referències normatives explícites.
+La importació DOCX és bàsica i depèn del navegador. Si no pot llegir el DOCX, copia el contingut del document i importa’l com a TXT.

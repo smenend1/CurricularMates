@@ -872,7 +872,7 @@
   else init();
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=15").catch(console.warn));
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=16").catch(console.warn));
   }
 })();
 
@@ -1090,8 +1090,8 @@
             <tbody>
               ${rubricRows().map((r, i) => `
                 <tr>
-                  <td>${i+1}</td>
-                  <td>${esc(r[0] || "")}</td>
+                  <td>${esc(r[0] || ("Ítem " + (i+1)))}</td>
+                  <td>${esc((collectCurricularPills && collectCurricularPills().length ? collectCurricularPills().join(", ") : "1.1, 1.2, 1.3, 2.1, 2.3, 3.1, 3.2, 6.1"))}</td>
                   <td>${esc(r[1] || "")}</td>
                   <td>${esc(r[2] || "")}</td>
                   <td>${esc(r[3] || "")}</td>
@@ -1176,5 +1176,463 @@
 
   document.addEventListener("click", ev => {
     if(ev.target?.id === "export-green-report") exportGreenReport();
+  });
+})();
+
+
+/* Creador i importador de situacions d'aprenentatge */
+(function(){
+  "use strict";
+
+  const STORE_KEY = "sa_mates_custom_v1";
+  const $ = id => document.getElementById(id);
+
+  function escapeHTML(text){
+    return String(text ?? "").replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[ch]));
+  }
+
+  function getStored(){
+    try{
+      return JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+    }catch{
+      return [];
+    }
+  }
+
+  function saveStored(items){
+    localStorage.setItem(STORE_KEY, JSON.stringify(items));
+  }
+
+  function uid(){
+    return "custom_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7);
+  }
+
+  function defaultCriteria(){
+    return ["1.1", "1.2", "1.3", "2.1", "2.3", "3.1", "3.2", "6.1"];
+  }
+
+  function createPanel(){
+    if(document.getElementById("custom-sa-panel")) return;
+
+    const teacher = document.getElementById("teacher");
+    const sa = document.getElementById("sa");
+    const target = teacher?.querySelector("form") || sa?.querySelector("form");
+    if(!target) return;
+
+    const panel = document.createElement("section");
+    panel.id = "custom-sa-panel";
+    panel.className = "creator-panel";
+    panel.innerHTML = `
+      <h3>Crear o importar una situació d’aprenentatge</h3>
+      <p class="import-note">Les SA creades es desen en aquest navegador. Després apareixen al selector de situacions del curs escollit.</p>
+
+      <form id="custom-sa-form" action="javascript:void(0)" class="creator-grid">
+        <label>Curs
+          <select id="custom-course">
+            <option value="1eso">1r ESO</option>
+            <option value="2eso">2n ESO</option>
+            <option value="3eso">3r ESO</option>
+            <option value="4eso">4t ESO</option>
+          </select>
+        </label>
+        <label>Matèria
+          <input id="custom-subject" value="Matemàtiques">
+        </label>
+        <label>Títol de la SA
+          <input id="custom-title" placeholder="Ex. Dissenyem un pressupost familiar">
+        </label>
+        <label>Producte final
+          <input id="custom-product" placeholder="Ex. Informe justificat amb taula i conclusió">
+        </label>
+        <label class="wide">Descripció, context i repte
+          <textarea id="custom-description" placeholder="Descriu el context, el repte i la pregunta guia..."></textarea>
+        </label>
+        <label class="wide">Objectius d’aprenentatge
+          <textarea id="custom-objectives" placeholder="Un objectiu per línia..."></textarea>
+        </label>
+        <label class="wide">Sabers
+          <textarea id="custom-sabers" placeholder="Un saber per línia..."></textarea>
+        </label>
+        <label class="wide">Criteris numèrics vinculats
+          <input id="custom-criteria" value="1.1, 1.2, 1.3, 2.1, 2.3, 3.1, 3.2, 6.1">
+        </label>
+        <label class="wide">Activitats
+          <textarea id="custom-activities" placeholder="Activitat inicial; activitat de desenvolupament; activitat d’estructuració; activitat d’aplicació..."></textarea>
+        </label>
+        <div class="wide report-actions">
+          <button type="submit">Crear SA</button>
+          <button type="button" id="clear-custom-sa">Esborrar SA creades</button>
+        </div>
+      </form>
+
+      <div class="creator-panel">
+        <h3>Importar SA des d’un document</h3>
+        <p class="import-note">Pots importar JSON, TXT o DOCX. El DOCX es llegeix de manera bàsica si el navegador permet descomprimir-lo; si no, copia el text del document i importa’l com a TXT.</p>
+        <input id="custom-import-file" type="file" accept=".json,.txt,.docx,application/json,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+        <div class="report-actions">
+          <button type="button" id="import-custom-sa">Importar SA</button>
+        </div>
+        <p id="custom-import-status" class="copy-ok" aria-live="polite"></p>
+      </div>
+    `;
+
+    target.insertAdjacentElement("afterend", panel);
+
+    document.getElementById("custom-sa-form")?.addEventListener("submit", handleCreate);
+    document.getElementById("clear-custom-sa")?.addEventListener("click", () => {
+      if(confirm("Vols esborrar totes les SA creades en aquest navegador?")){
+        saveStored([]);
+        refreshSelectors();
+        document.getElementById("custom-import-status").textContent = "SA creades esborrades.";
+      }
+    });
+    document.getElementById("import-custom-sa")?.addEventListener("click", handleImport);
+  }
+
+  function splitLines(text){
+    return String(text || "")
+      .split(/\n|;/)
+      .map(x => x.trim())
+      .filter(Boolean);
+  }
+
+  function parseCriteria(text){
+    const items = String(text || "")
+      .split(/,|;|\n/)
+      .map(x => x.trim())
+      .filter(Boolean);
+    return items.length ? items : defaultCriteria();
+  }
+
+  function buildSAFromForm(){
+    const title = document.getElementById("custom-title").value.trim();
+    if(!title) throw new Error("Cal escriure un títol per a la SA.");
+    return {
+      id: uid(),
+      custom: true,
+      course: document.getElementById("custom-course").value,
+      subject: document.getElementById("custom-subject").value.trim() || "Matemàtiques",
+      title,
+      product: document.getElementById("custom-product").value.trim() || "Producte final pendent de concretar.",
+      description: document.getElementById("custom-description").value.trim() || "Situació creada pel docent.",
+      objectives: splitLines(document.getElementById("custom-objectives").value),
+      sabers: splitLines(document.getElementById("custom-sabers").value),
+      criteria: parseCriteria(document.getElementById("custom-criteria").value),
+      activities: splitLines(document.getElementById("custom-activities").value)
+    };
+  }
+
+  function handleCreate(event){
+    event.preventDefault();
+    const status = document.getElementById("custom-import-status");
+    try{
+      const item = buildSAFromForm();
+      const items = getStored();
+      items.push(item);
+      saveStored(items);
+      refreshSelectors();
+      status.textContent = "SA creada i afegida al selector.";
+      document.getElementById("custom-sa-form").reset();
+      document.getElementById("custom-subject").value = "Matemàtiques";
+      document.getElementById("custom-criteria").value = "1.1, 1.2, 1.3, 2.1, 2.3, 3.1, 3.2, 6.1";
+    }catch(err){
+      status.textContent = err.message;
+    }
+  }
+
+  async function readDocx(file){
+    const buffer = await file.arrayBuffer();
+    if(!("DecompressionStream" in window)){
+      throw new Error("Aquest navegador no permet llegir DOCX directament. Desa el contingut com a TXT o copia i enganxa el text.");
+    }
+
+    const bytes = new Uint8Array(buffer);
+    const decoder = new TextDecoder();
+    const sig = [0x50,0x4b,0x03,0x04];
+    let pos = 0;
+
+    while(pos < bytes.length - 30){
+      if(bytes[pos] !== sig[0] || bytes[pos+1] !== sig[1] || bytes[pos+2] !== sig[2] || bytes[pos+3] !== sig[3]){
+        pos++;
+        continue;
+      }
+      const method = bytes[pos+8] | (bytes[pos+9] << 8);
+      const compressedSize = bytes[pos+18] | (bytes[pos+19] << 8) | (bytes[pos+20] << 16) | (bytes[pos+21] << 24);
+      const fileNameLength = bytes[pos+26] | (bytes[pos+27] << 8);
+      const extraLength = bytes[pos+28] | (bytes[pos+29] << 8);
+      const nameStart = pos + 30;
+      const name = decoder.decode(bytes.slice(nameStart, nameStart + fileNameLength));
+      const dataStart = nameStart + fileNameLength + extraLength;
+      const dataEnd = dataStart + compressedSize;
+
+      if(name === "word/document.xml"){
+        let xml;
+        const fileData = bytes.slice(dataStart, dataEnd);
+        if(method === 0){
+          xml = decoder.decode(fileData);
+        }else if(method === 8){
+          const ds = new DecompressionStream("deflate-raw");
+          const stream = new Blob([fileData]).stream().pipeThrough(ds);
+          xml = await new Response(stream).text();
+        }else{
+          throw new Error("Format de compressió DOCX no compatible en aquest navegador.");
+        }
+        return xmlToText(xml);
+      }
+      pos = dataEnd;
+    }
+    throw new Error("No s'ha trobat el contingut principal del DOCX.");
+  }
+
+  function xmlToText(xml){
+    return xml
+      .replace(/<w:p[^>]*>/g, "\n")
+      .replace(/<[^>]+>/g, "")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  function saFromText(text){
+    const lines = splitLines(text.replace(/\r/g, "\n"));
+    const lower = text.toLowerCase();
+
+    function after(label){
+      const rx = new RegExp(label + "\\s*:?\\s*(.+)", "i");
+      const line = lines.find(l => rx.test(l));
+      return line ? line.match(rx)[1].trim() : "";
+    }
+
+    const title = after("títol") || after("titol") || after("sa") || lines[0] || "Situació importada";
+    const course = /4t|4r|quart/i.test(text) ? "4eso" : /3r|tercer/i.test(text) ? "3eso" : /2n|segon/i.test(text) ? "2eso" : "1eso";
+    const subject = after("matèria") || after("materia") || "Matemàtiques";
+    const product = after("producte final") || after("producte") || "Producte final pendent de concretar.";
+    const description = after("descripció") || after("descripcio") || after("repte") || lines.slice(1,5).join(" ");
+    const criteria = (text.match(/\b\d+\.\d+\b/g) || defaultCriteria()).filter((v,i,a)=>a.indexOf(v)===i);
+
+    return {
+      id: uid(),
+      custom: true,
+      course,
+      subject,
+      title,
+      product,
+      description,
+      objectives: lines.filter(l => /analitzar|calcular|aplicar|justificar|dissenyar|interpretar/i.test(l)).slice(0,4),
+      sabers: lines.filter(l => /saber|mesura|funció|percentatge|dades|geometria|estadística|proporcionalitat/i.test(l)).slice(0,6),
+      criteria,
+      activities: lines.filter(l => /activitat|inicial|desenvolupament|estructuració|aplicació/i.test(l)).slice(0,6)
+    };
+  }
+
+  async function handleImport(){
+    const file = document.getElementById("custom-import-file")?.files?.[0];
+    const status = document.getElementById("custom-import-status");
+    if(!file){
+      status.textContent = "Selecciona un fitxer.";
+      return;
+    }
+    try{
+      let item;
+      if(file.name.toLowerCase().endsWith(".json")){
+        const data = JSON.parse(await file.text());
+        item = {
+          id: uid(),
+          custom: true,
+          course: data.course || data.curs || "1eso",
+          subject: data.subject || data.materia || "Matemàtiques",
+          title: data.title || data.titol || data.títol || "Situació importada",
+          product: data.product || data.producte || "Producte final pendent de concretar.",
+          description: data.description || data.descripcio || data.descripció || "",
+          objectives: data.objectives || data.objectius || [],
+          sabers: data.sabers || [],
+          criteria: data.criteria || data.criteris || defaultCriteria(),
+          activities: data.activities || data.activitats || []
+        };
+      }else if(file.name.toLowerCase().endsWith(".docx")){
+        item = saFromText(await readDocx(file));
+      }else{
+        item = saFromText(await file.text());
+      }
+
+      const items = getStored();
+      items.push(item);
+      saveStored(items);
+      refreshSelectors();
+      status.textContent = "SA importada i afegida al selector.";
+    }catch(err){
+      status.textContent = err.message;
+    }
+  }
+
+  function addCustomOptionsToSelect(select, course){
+    if(!select) return;
+    const items = getStored().filter(x => x.course === course);
+    if(!items.length) return;
+    const group = document.createElement("optgroup");
+    group.label = "SA creades";
+    items.forEach(item => {
+      const opt = document.createElement("option");
+      opt.value = item.id;
+      opt.textContent = "✦ " + item.title;
+      group.appendChild(opt);
+    });
+    select.appendChild(group);
+  }
+
+  function refreshSelectors(){
+    // Deixem que el motor principal repobli si té funcions pròpies, i després afegim custom.
+    const saCourse = document.getElementById("sa-course")?.value || "1eso";
+    const teacherCourse = document.getElementById("teacher-course")?.value || saCourse;
+
+    setTimeout(() => {
+      addCustomOptionsToSelect(document.getElementById("sa-select"), saCourse);
+      addCustomOptionsToSelect(document.getElementById("teacher-sa"), teacherCourse);
+    }, 60);
+  }
+
+  function customById(id){
+    return getStored().find(x => x.id === id);
+  }
+
+  function isCustomSelected(){
+    return customById(document.getElementById("sa-select")?.value);
+  }
+
+  function renderCustomInputs(){
+    const item = isCustomSelected();
+    if(!item) return false;
+    const box = document.getElementById("sa-inputs");
+    if(!box) return true;
+    box.innerHTML = `
+      <div class="sa-course-note"><span class="custom-sa-badge">SA creada</span> · ${escapeHTML(item.subject)} · ${escapeHTML(item.course)}</div>
+      <label class="wide">Dades o observacions de treball
+        <textarea id="custom-work-notes" rows="5" placeholder="Anota dades utilitzades, càlculs, decisions o observacions de l’alumnat..."></textarea>
+      </label>
+    `;
+    return true;
+  }
+
+  function customRubricRows(item){
+    const criteriaText = (item.criteria || defaultCriteria()).join(", ");
+    const baseItems = [
+      "Anàlisi de la necessitat i definició del repte",
+      "Ideació, planificació i gestió del procés",
+      "Proposta matemàtica, resultats i viabilitat",
+      "Comunicació, justificació i millora"
+    ];
+    return baseItems.map(name => [name, criteriaText,
+      "Mostra evidències molt parcials i necessita molta guia per avançar.",
+      "Resol de manera bàsica amb alguna justificació o evidència suficient.",
+      "Desenvolupa correctament el procés amb coherència, justificació i revisió.",
+      "Integra el procés amb autonomia, transferència i argumentació aprofundida."
+    ]);
+  }
+
+  function renderCustomSA(event){
+    const item = isCustomSelected();
+    if(!item) return false;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const notes = document.getElementById("custom-work-notes")?.value?.trim() || "[pendent de completar]";
+    const criteria = (item.criteria || defaultCriteria()).join(", ");
+    const result = document.getElementById("result");
+    if(!result) return true;
+
+    result.innerHTML = `
+      <h2>${escapeHTML(item.title)}</h2>
+      <p>${escapeHTML(item.description)}</p>
+      <div class="curriculum-box">
+        <h3>Producte final</h3>
+        <p>${escapeHTML(item.product)}</p>
+      </div>
+      <div class="curriculum-box">
+        <h3>Criteris curriculars vinculats</h3>
+        <div class="criteria-pills">${(item.criteria || defaultCriteria()).map(c => `<span class="pill">${escapeHTML(c)}</span>`).join("")}</div>
+      </div>
+      <section class="sa-template">
+        <h3>Programació de la situació d’aprenentatge</h3>
+        <div class="sa-template-grid">
+          <div class="sa-template-card"><strong>Títol</strong>${escapeHTML(item.title)}</div>
+          <div class="sa-template-card"><strong>Curs</strong>${escapeHTML(item.course)}</div>
+          <div class="sa-template-card"><strong>Matèria</strong>${escapeHTML(item.subject)}</div>
+        </div>
+        <div class="sa-template-section"><h4>Objectius</h4><ul>${(item.objectives || []).map(o => `<li>${escapeHTML(o)}</li>`).join("") || "<li>[pendent de completar]</li>"}</ul></div>
+        <div class="sa-template-section"><h4>Sabers</h4><ul>${(item.sabers || []).map(s => `<li>${escapeHTML(s)}</li>`).join("") || "<li>[pendent de completar]</li>"}</ul></div>
+        <div class="sa-template-section"><h4>Activitats</h4><ul>${(item.activities || []).map(a => `<li>${escapeHTML(a)}</li>`).join("") || "<li>[pendent de completar]</li>"}</ul></div>
+        <div class="sa-template-section"><h4>Dades o observacions de treball</h4><p>${escapeHTML(notes)}</p></div>
+      </section>
+      <section class="formal-rubric">
+        <h3>Rúbrica d’avaluació de la situació</h3>
+        <table class="rubric-table formal">
+          <thead><tr><th>Ítem</th><th>Criteris</th><th>NA</th><th>AS</th><th>AN</th><th>AE</th></tr></thead>
+          <tbody>${customRubricRows(item).map(r => `<tr>${r.map(c => `<td>${escapeHTML(c)}</td>`).join("")}</tr>`).join("")}</tbody>
+        </table>
+      </section>
+      <div class="report-actions">
+        <button type="button" id="export-green-report">Exportar informe format SA</button>
+      </div>
+    `;
+    return true;
+  }
+
+  function patchExistingGreenReportRubric(){
+    // Reescrivim la funció exportadora només a nivell visual: si hi ha una taula formal, la convertim amb ítem i criteris numèrics.
+    const oldClick = document.getElementById("export-green-report");
+    // La funció principal ja existeix; el canvi fort es fa afegint criteris als rows si exporta des de DOM actual.
+  }
+
+  function enhanceExistingRubricTables(){
+    document.querySelectorAll("#result .rubric-table.formal").forEach(table => {
+      const header = table.querySelector("thead tr");
+      if(!header || header.children.length >= 6) return;
+      const criteriaCodes = Array.from(document.querySelectorAll("#result .code-pill.criteri, #result .pill"))
+        .map(x => x.textContent.trim())
+        .filter(x => /\d+\.\d+/.test(x));
+      const codes = criteriaCodes.length ? [...new Set(criteriaCodes)].join(", ") : defaultCriteria().join(", ");
+      const th = document.createElement("th");
+      th.textContent = "Criteris";
+      header.insertBefore(th, header.children[1]);
+      table.querySelectorAll("tbody tr").forEach(tr => {
+        const td = document.createElement("td");
+        td.textContent = codes;
+        tr.insertBefore(td, tr.children[1]);
+      });
+    });
+  }
+
+  document.addEventListener("change", ev => {
+    if(ev.target?.id === "sa-course" || ev.target?.id === "teacher-course"){
+      refreshSelectors();
+    }
+    if(ev.target?.id === "sa-select"){
+      renderCustomInputs();
+    }
+  }, true);
+
+  document.addEventListener("submit", ev => {
+    if(ev.target?.id === "sa-form"){
+      if(renderCustomSA(ev)) return;
+      setTimeout(enhanceExistingRubricTables, 100);
+    }
+  }, true);
+
+  const observer = new MutationObserver(() => {
+    createPanel();
+    refreshSelectors();
+    enhanceExistingRubricTables();
+  });
+
+  window.addEventListener("DOMContentLoaded", () => {
+    createPanel();
+    refreshSelectors();
+    renderCustomInputs();
+    const result = document.getElementById("result");
+    if(result) observer.observe(result, {childList:true, subtree:true});
   });
 })();
