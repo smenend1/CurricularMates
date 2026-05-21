@@ -825,7 +825,7 @@
   function printDoc(title, html){
     const doc=`<!doctype html><html lang="ca"><head><meta charset="utf-8"><title>${title}</title><style>
       @page{size:A4;margin:10mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}
-      body{font-family:Verdana,Tahoma,Geneva,sans-serif;color:#1f2937;line-height:1.38;margin:0}
+      body{font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:1.38;margin:0}
       .print-header{padding:10px 14px;border-radius:12px;background:#1e40af;color:white;margin-bottom:10px;break-inside:avoid}
       .print-header h1{color:white;font-size:22px;margin:0}h2,h3{color:#1e3a8a}.result-card{border-left:5px solid #1d4ed8;border-radius:14px;padding:12px;background:white}
       .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.kpi,.proc,.curriculum-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px;break-inside:avoid}
@@ -872,7 +872,7 @@
   else init();
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=18").catch(console.warn));
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=19").catch(console.warn));
   }
 })();
 
@@ -1109,7 +1109,7 @@
     return `
       @page{size:A4 landscape;margin:10mm}
       *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-variant-ligatures:none!important;text-rendering:geometricPrecision!important}
-      body{margin:0;background:#f7fbf8;color:#17231c;font-family:Verdana,Tahoma,Geneva,sans-serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
+      body{margin:0;background:#f7fbf8;color:#17231c;font-family:Arial, Helvetica, sans-serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
       .green-report{max-width:100%;padding:0}
       .cover-block{display:grid;grid-template-columns:70px 1fr;gap:16px;min-height:175mm;padding:8px;background:linear-gradient(90deg,#ffffff 0%,#f1fbf5 100%);break-after:page}
       .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
@@ -2345,7 +2345,7 @@
     return `
       @page{size:A4 landscape;margin:10mm}
       *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-variant-ligatures:none!important;text-rendering:geometricPrecision!important}
-      body{margin:0;background:#f7fbf8;color:#17231c;font-family:Verdana,Tahoma,Geneva,sans-serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
+      body{margin:0;background:#f7fbf8;color:#17231c;font-family:Arial, Helvetica, sans-serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
       .cover-block{display:grid;grid-template-columns:70px 1fr;gap:16px;min-height:175mm;padding:8px;background:linear-gradient(90deg,#ffffff 0%,#f1fbf5 100%);break-after:page}
       .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
       .cover-main{display:grid;align-content:start;gap:12px}
@@ -2420,4 +2420,88 @@
 
   if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", initOfficialTemplate);
   else initOfficialTemplate();
+})();
+
+
+/* Selector de font d'impressió: Arial o Times New Roman */
+(function(){
+  "use strict";
+
+  function getPrintFont(){
+    try{
+      return localStorage.getItem("sa_print_font") || "arial";
+    }catch(err){
+      return "arial";
+    }
+  }
+
+  function fontStack(){
+    return getPrintFont() === "times"
+      ? '"Times New Roman", Times, serif'
+      : 'Arial, Helvetica, sans-serif';
+  }
+
+  function addFontSelector(){
+    if(document.getElementById("print-font-selector-panel")) return;
+    const target = document.getElementById("official-template-panel") || document.getElementById("custom-sa-panel") || document.querySelector("main") || document.body;
+    const panel = document.createElement("section");
+    panel.id = "print-font-selector-panel";
+    panel.className = "creator-panel";
+    panel.innerHTML = `
+      <h3>Font d’impressió</h3>
+      <p class="import-note">Si una lletra es veu malament al PDF, prova l’altra font.</p>
+      <label>Font per exportar/imprimir
+        <select id="print-font-choice">
+          <option value="arial">Arial</option>
+          <option value="times">Times New Roman</option>
+        </select>
+      </label>
+    `;
+    target.insertAdjacentElement("afterend", panel);
+    const select = document.getElementById("print-font-choice");
+    if(select){
+      select.value = getPrintFont();
+      select.addEventListener("change", function(){
+        localStorage.setItem("sa_print_font", select.value);
+      });
+    }
+  }
+
+  const originalOpen = window.open;
+  window.open = function(){
+    const win = originalOpen.apply(window, arguments);
+    if(!win || !win.document) return win;
+
+    const originalWrite = win.document.write.bind(win.document);
+    win.document.write = function(html){
+      if(typeof html === "string" && html.indexOf("<style>") !== -1){
+        const stack = fontStack();
+        const extra = `
+          <style>
+            html, body, body *, .green-report, .green-report *, table, th, td {
+              font-family: ${stack} !important;
+              font-variant-ligatures: none !important;
+              font-feature-settings: "liga" 0, "clig" 0, "calt" 0 !important;
+            }
+            p, li, td, .driving-question {
+              font-weight: 400 !important;
+            }
+            h1, h2, h3, strong, th {
+              font-weight: 700 !important;
+            }
+          </style>
+        `;
+        html = html.replace("</head>", extra + "</head>");
+        html = html.replace(/font-family:[^;}{]+/g, "font-family:" + stack);
+      }
+      return originalWrite(html);
+    };
+    return win;
+  };
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", addFontSelector);
+  }else{
+    addFontSelector();
+  }
 })();

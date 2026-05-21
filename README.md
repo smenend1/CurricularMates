@@ -1,16 +1,14 @@
 # Situacions d’aprenentatge de Matemàtiques ESO
 
-## Correcció d’impressió
+## Correcció de font d’impressió
 
-S’ha canviat la font dels informes exportats a:
+Aquesta versió força la sortida d’impressió amb:
 
-- Verdana
-- Tahoma
-- Geneva
-- sans-serif
+- Arial per defecte.
+- Times New Roman com a alternativa seleccionable.
 
-També s’han desactivat lligadures i pesos excessivament gruixuts en textos llargs per evitar que algunes lletres, especialment la “l”, es renderitzin com una barra fosca en alguns PDF o navegadors.
+També s’ha afegit un selector “Font d’impressió” dins l’aplicació.
 
-## Notes
+Si la lletra “l” continua sortint malament amb Arial, selecciona Times New Roman i torna a exportar.
 
-Després de pujar aquesta versió a GitHub Pages, convé esborrar la memòria cau o desinstal·lar la PWA anterior perquè no carregui CSS/JS antics.
+Després de pujar-la a GitHub Pages, esborra la memòria cau o desinstal·la la PWA anterior.
