@@ -1,13 +1,16 @@
 # Situacions d’aprenentatge de Matemàtiques ESO
 
-## Novetats
+## Correcció d’impressió
 
-- Rúbrica final amb columna d’ítem descriptiu i columna de criteris numèrics.
-- Bloc per crear situacions d’aprenentatge pròpies.
-- Importació de SA des de JSON, TXT o DOCX.
-- Les SA creades es desen al navegador i apareixen al selector de situacions.
-- L’exportació en format SA manté portada, blocs, evidències i rúbrica final.
+S’ha canviat la font dels informes exportats a:
 
-## Importació DOCX
+- Verdana
+- Tahoma
+- Geneva
+- sans-serif
 
-La importació DOCX és bàsica i depèn del navegador. Si no pot llegir el DOCX, copia el contingut del document i importa’l com a TXT.
+També s’han desactivat lligadures i pesos excessivament gruixuts en textos llargs per evitar que algunes lletres, especialment la “l”, es renderitzin com una barra fosca en alguns PDF o navegadors.
+
+## Notes
+
+Després de pujar aquesta versió a GitHub Pages, convé esborrar la memòria cau o desinstal·lar la PWA anterior perquè no carregui CSS/JS antics.

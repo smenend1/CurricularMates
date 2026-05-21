@@ -825,12 +825,12 @@
   function printDoc(title, html){
     const doc=`<!doctype html><html lang="ca"><head><meta charset="utf-8"><title>${title}</title><style>
       @page{size:A4;margin:10mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}
-      body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#1f2937;line-height:1.38;margin:0}
+      body{font-family:Verdana,Tahoma,Geneva,sans-serif;color:#1f2937;line-height:1.38;margin:0}
       .print-header{padding:10px 14px;border-radius:12px;background:#1e40af;color:white;margin-bottom:10px;break-inside:avoid}
       .print-header h1{color:white;font-size:22px;margin:0}h2,h3{color:#1e3a8a}.result-card{border-left:5px solid #1d4ed8;border-radius:14px;padding:12px;background:white}
       .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.kpi,.proc,.curriculum-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px;break-inside:avoid}
       .kpi strong{display:block;color:#1e3a8a;font-size:17px}table{width:100%;border-collapse:collapse;margin:8px 0;break-inside:avoid}th,td{border:1px solid #cbd5e1;padding:6px;text-align:left;vertical-align:top}th{background:#eff6ff;color:#1e3a8a}
-      .code-pill{display:inline-flex;min-width:55px;justify-content:center;border-radius:999px;background:#1e40af;color:white;padding:2px 6px;font-size:12px;font-weight:800}.code-pill.saber{background:#047857}.code-pill.criteri{background:#b45309}.numbered-item{display:flex;gap:7px;margin:4px 0;break-inside:avoid}.formal-rubric{margin-top:12px;padding:10px;border:1px solid #bfdbfe;border-radius:12px;background:#f8fbff;break-inside:avoid}.rubric-tag{display:inline-flex;border-radius:999px;padding:1px 5px;color:white;font-weight:900;font-size:11px}.rubric-tag.na{background:#b91c1c}.rubric-tag.as{background:#b45309}.rubric-tag.an{background:#047857}.rubric-tag.ae{background:#1e40af}.rubric-table.formal td:nth-child(2){background:#fef2f2}.rubric-table.formal td:nth-child(3){background:#fff7ed}.rubric-table.formal td:nth-child(4){background:#f0fdf4}.rubric-table.formal td:nth-child(5){background:#ecfdf5}.report-actions,button{display:none!important}
+      .code-pill{display:inline-flex;min-width:55px;justify-content:center;border-radius:999px;background:#1e40af;color:white;padding:2px 6px;font-size:12px;font-weight:700}.code-pill.saber{background:#047857}.code-pill.criteri{background:#b45309}.numbered-item{display:flex;gap:7px;margin:4px 0;break-inside:avoid}.formal-rubric{margin-top:12px;padding:10px;border:1px solid #bfdbfe;border-radius:12px;background:#f8fbff;break-inside:avoid}.rubric-tag{display:inline-flex;border-radius:999px;padding:1px 5px;color:white;font-weight:700;font-size:11px}.rubric-tag.na{background:#b91c1c}.rubric-tag.as{background:#b45309}.rubric-tag.an{background:#047857}.rubric-tag.ae{background:#1e40af}.rubric-table.formal td:nth-child(2){background:#fef2f2}.rubric-table.formal td:nth-child(3){background:#fff7ed}.rubric-table.formal td:nth-child(4){background:#f0fdf4}.rubric-table.formal td:nth-child(5){background:#ecfdf5}p,li,td,.driving-question{font-weight:400!important}.report-actions,button{display:none!important}
     </style></head><body><header class="print-header"><h1>${title}</h1><div>Informe de situació d’aprenentatge</div></header>${html}<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),350));<\/script></body></html>`;
     const w=window.open("","_blank"); if(!w){alert("El navegador ha bloquejat la finestra d’impressió.");return;} w.document.open(); w.document.write(doc); w.document.close();
   }
@@ -872,7 +872,7 @@
   else init();
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=16").catch(console.warn));
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=18").catch(console.warn));
   }
 })();
 
@@ -1108,39 +1108,39 @@
   function greenPrintStyles(){
     return `
       @page{size:A4 landscape;margin:10mm}
-      *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-      body{margin:0;background:#f7fbf8;color:#17231c;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.38}
+      *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-variant-ligatures:none!important;text-rendering:geometricPrecision!important}
+      body{margin:0;background:#f7fbf8;color:#17231c;font-family:Verdana,Tahoma,Geneva,sans-serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
       .green-report{max-width:100%;padding:0}
       .cover-block{display:grid;grid-template-columns:70px 1fr;gap:16px;min-height:175mm;padding:8px;background:linear-gradient(90deg,#ffffff 0%,#f1fbf5 100%);break-after:page}
-      .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:900;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
+      .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
       .cover-main{display:grid;align-content:start;gap:12px}
       h1{font-size:30px;line-height:1.05;margin:0;color:#111827}
       h2{font-size:15px;margin:0 0 5px;color:#0f6b42}
       .driving-question{font-size:18px;margin:0;color:#27362f}
       .top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
       .info-card,.soft-card,.sa-card,.activity-card,.evidence-card{background:#fff;border:1px solid #d7e5dc;border-radius:18px;box-shadow:0 12px 30px rgba(15,80,50,.08);padding:14px;break-inside:avoid}
-      .info-card span{display:block;color:#0f6b42;font-weight:900;font-size:12px}.info-card strong{font-size:18px}
+      .info-card span{display:block;color:#0f6b42;font-weight:700;font-size:12px}.info-card strong{font-size:18px}
       .soft-card{background:#edfbf2}
       .sa-card{margin:12px 0;padding:16px}
       ul{margin:0;padding-left:20px}.sa-card li{margin:5px 0}
-      .criteria-pills{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-flex;border:1px solid #f1d38a;background:#fff8db;color:#855d00;border-radius:999px;padding:5px 9px;font-weight:800}
+      .criteria-pills{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-flex;border:1px solid #f1d38a;background:#fff8db;color:#855d00;border-radius:999px;padding:5px 9px;font-weight:700}
       .activity-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}.activity-card{min-height:105px}
       .evidence-section{break-before:page;display:grid;grid-template-columns:repeat(5,1fr);gap:12px;background:#effaf3;padding:16px;border-radius:18px}
       .evidence-section h2{grid-column:1/-1}
       .evidence-card{min-height:118px;display:flex;flex-direction:column;gap:8px}
-      .evidence-card span{display:inline-flex;width:28px;height:28px;border-radius:8px;background:#0f6b42;color:#fff;align-items:center;justify-content:center;font-weight:900}
+      .evidence-card span{display:inline-flex;width:28px;height:28px;border-radius:8px;background:#0f6b42;color:#fff;align-items:center;justify-content:center;font-weight:700}
       .evidence-card em{color:#66756c}
       .rubric-print{break-before:page;background:#fff;padding:12px;border-radius:16px}
       .rubric-print h2{font-size:24px;color:#111827;margin:0 0 12px}
       table{width:100%;border-collapse:collapse;font-size:12px}
       th,td{border:1px solid #bdd7c7;padding:7px;vertical-align:top}
       th{background:#dcf7e7;color:#0f6b42}
-      td:nth-child(1){font-weight:900;color:#0f6b42;text-align:center}
+      td:nth-child(1){font-weight:700;color:#0f6b42;text-align:center}
       td:nth-child(3){background:#fff}
       td:nth-child(4){background:#fffdf2}
       td:nth-child(5){background:#f1fbf5}
       td:nth-child(6){background:#e7f8ef}
-      .report-actions,button{display:none!important}
+      p,li,td,.driving-question{font-weight:400!important}.report-actions,button{display:none!important}
       @media print{.sa-card,.activity-card,.evidence-card,.soft-card,.info-card{break-inside:avoid}}
     `;
   }
@@ -1635,4 +1635,789 @@
     const result = document.getElementById("result");
     if(result) observer.observe(result, {childList:true, subtree:true});
   });
+})();
+
+
+/* Plantilla oficial de situació d'aprenentatge */
+(function(){
+  "use strict";
+
+  const STORE_KEY = "sa_mates_official_template_v1";
+
+  const $ = id => document.getElementById(id);
+
+  function esc(text){
+    return String(text ?? "").replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[ch]));
+  }
+
+  function splitItems(text){
+    return String(text || "")
+      .split(/\n|;/)
+      .map(x => x.trim())
+      .filter(Boolean);
+  }
+
+  function splitCodes(text){
+    const found = String(text || "").match(/\b(?:CE)?\d+(?:\.\d+)?\b/g) || [];
+    const cleaned = found.map(x => x.trim()).filter(Boolean);
+    return cleaned.length ? [...new Set(cleaned)] : [];
+  }
+
+  function uid(){
+    return "official_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+  }
+
+  function loadOfficial(){
+    try{
+      return JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+    }catch{
+      return [];
+    }
+  }
+
+  function saveOfficial(items){
+    localStorage.setItem(STORE_KEY, JSON.stringify(items));
+  }
+
+  function normalizeCourse(text){
+    const t = String(text || "").toLowerCase();
+    if(/4|4t|quart|eso4/.test(t)) return "4eso";
+    if(/3|3r|tercer|eso3/.test(t)) return "3eso";
+    if(/2|2n|segon|eso2/.test(t)) return "2eso";
+    return "1eso";
+  }
+
+  function courseLabel(course){
+    return { "1eso":"1r ESO", "2eso":"2n ESO", "3eso":"3r ESO", "4eso":"4t ESO" }[course] || course || "ESO";
+  }
+
+  function officialEmpty(){
+    return {
+      id: uid(),
+      official: true,
+      title: "",
+      course: "1eso",
+      subject: "Matemàtiques",
+      duration: "",
+      teacherGroup: "",
+      context: "",
+      challenge: "",
+      justification: "",
+      product: "",
+      competences: [],
+      criteria: [],
+      digital: "",
+      citizen: "",
+      entrepreneurial: "",
+      personal: "",
+      objectives: [],
+      saberBlocks: "",
+      sabers: [],
+      methodology: "",
+      organization: "",
+      resources: "",
+      supports: "",
+      initial: "",
+      development: "",
+      structuring: "",
+      application: "",
+      evidences: "",
+      instruments: "",
+      feedback: "",
+      vectors: {
+        competency: "",
+        gender: "",
+        universal: "",
+        language: "",
+        citizenship: "",
+        wellbeing: ""
+      },
+      rubric: []
+    };
+  }
+
+  function defaultRubric(criteriaCodes){
+    const codes = (criteriaCodes && criteriaCodes.length ? criteriaCodes : ["1.1","1.2","1.3","2.1","2.3","3.1","3.2","6.1"]).join(", ");
+    return [
+      {
+        item:"Anàlisi de la necessitat i definició del repte",
+        criteria:codes,
+        NA:"Mostra evidències molt parcials de comprensió del repte i necessita molta guia per avançar.",
+        AS:"Resol de manera bàsica l’anàlisi de la necessitat amb alguna justificació o evidència suficient.",
+        AN:"Desenvolupa correctament l’anàlisi del repte amb coherència, justificació i revisió del procés.",
+        AE:"Integra l’anàlisi de la necessitat amb autonomia, criteri, transferència i argumentació aprofundida."
+      },
+      {
+        item:"Ideació, planificació i gestió del procés",
+        criteria:codes,
+        NA:"Mostra una planificació poc clara, incompleta o molt dependent de l’ajuda externa.",
+        AS:"Planifica el procés de manera bàsica i segueix algunes fases amb suport.",
+        AN:"Organitza el procés amb fases clares, criteris i revisió de les decisions.",
+        AE:"Gestiona el procés amb autonomia, anticipa dificultats i introdueix millores justificades."
+      },
+      {
+        item:"Proposta, resultats i viabilitat",
+        criteria:codes,
+        NA:"La proposta és incompleta o presenta errors importants que en dificulten la viabilitat.",
+        AS:"La proposta és bàsica però respon parcialment al repte amb resultats suficients.",
+        AN:"La proposta és coherent, viable i justificada amb resultats adequats.",
+        AE:"La proposta és completa, transferible i justificada amb criteris rigorosos i millores possibles."
+      },
+      {
+        item:"Comunicació, documentació i reflexió final",
+        criteria:codes,
+        NA:"Comunica poc el procés i no justifica adequadament la conclusió.",
+        AS:"Comunica la solució de manera bàsica i inclou una justificació parcial.",
+        AN:"Comunica el procés i la conclusió amb claredat, evidències i vocabulari adequat.",
+        AE:"Integra documentació, justificació, revisió i reflexió final de manera completa i autònoma."
+      }
+    ];
+  }
+
+  function createOfficialPanel(){
+    if($("#official-template-panel")) return;
+    const teacher = $("#teacher");
+    const target = teacher?.querySelector("form") || $("#sa")?.querySelector("form");
+    if(!target) return;
+
+    const panel = document.createElement("section");
+    panel.id = "official-template-panel";
+    panel.className = "official-template-panel";
+    panel.innerHTML = `
+      <h3>Plantilla oficial de situació d’aprenentatge</h3>
+      <p class="template-help">Crea o importa una SA amb l’estructura completa de la plantilla. Després apareixerà al selector de situacions del curs corresponent.</p>
+
+      <div class="template-tabs" role="tablist">
+        <button type="button" class="active" data-template-tab="id">1. Identificació</button>
+        <button type="button" data-template-tab="context">2. Repte</button>
+        <button type="button" data-template-tab="curriculum">3. Currículum</button>
+        <button type="button" data-template-tab="objectives">4. Objectius i sabers</button>
+        <button type="button" data-template-tab="method">5. Metodologia</button>
+        <button type="button" data-template-tab="activities">6. Activitats</button>
+        <button type="button" data-template-tab="assessment">7. Avaluació</button>
+        <button type="button" data-template-tab="vectors">8. Vectors</button>
+        <button type="button" data-template-tab="rubric">9. Rúbrica</button>
+        <button type="button" data-template-tab="import">Importar</button>
+      </div>
+
+      <form id="official-sa-form" action="javascript:void(0)">
+        <div class="template-page active" data-template-page="id">
+          <div class="template-grid">
+            <label>Títol<input id="off-title" placeholder="Títol suggeridor de la SA"></label>
+            <label>Curs
+              <select id="off-course">
+                <option value="1eso">1r ESO</option>
+                <option value="2eso">2n ESO</option>
+                <option value="3eso">3r ESO</option>
+                <option value="4eso">4t ESO</option>
+              </select>
+            </label>
+            <label>Matèria<input id="off-subject" value="Matemàtiques"></label>
+            <label>Durada<input id="off-duration" placeholder="Nombre de sessions, trimestre o període"></label>
+            <label class="wide">Docent / Grup<input id="off-teacher" placeholder="Opcional"></label>
+          </div>
+        </div>
+
+        <div class="template-page" data-template-page="context">
+          <label>Context<textarea id="off-context" placeholder="Quina realitat, necessitat o situació propera origina la SA?"></textarea></label>
+          <label>Repte<textarea id="off-challenge" placeholder="Pregunta o problema que cal comprendre, respondre o sobre el qual cal intervenir"></textarea></label>
+          <label>Justificació<textarea id="off-justification" placeholder="Per què és rellevant per a l’alumnat?"></textarea></label>
+          <label>Producte final<textarea id="off-product" placeholder="Què haurà de produir, construir, simular, comunicar o lliurar l’alumnat?"></textarea></label>
+        </div>
+
+        <div class="template-page" data-template-page="curriculum">
+          <label>Competències específiques<textarea id="off-competences" placeholder="Codis o text: CE1, CE2, CE3..."></textarea></label>
+          <label>Criteris d’avaluació<textarea id="off-criteria" placeholder="Codis o text: 1.1, 1.2, 2.3..."></textarea></label>
+          <div class="template-grid">
+            <label>Competència digital<textarea id="off-digital"></textarea></label>
+            <label>Competència ciutadana<textarea id="off-citizen"></textarea></label>
+            <label>Competència emprenedora<textarea id="off-entrepreneurial"></textarea></label>
+            <label>Personal, social i d’aprendre a aprendre<textarea id="off-personal"></textarea></label>
+          </div>
+        </div>
+
+        <div class="template-page" data-template-page="objectives">
+          <label>Objectius d’aprenentatge<textarea id="off-objectives" placeholder="Un objectiu per línia. Recomanació: capacitat + saber + finalitat."></textarea></label>
+          <label>Blocs de sabers<input id="off-saber-blocks" placeholder="Proporcionalitat, funcions, dades, geometria..."></label>
+          <label>Sabers concrets<textarea id="off-sabers" placeholder="Un saber per línia"></textarea></label>
+        </div>
+
+        <div class="template-page" data-template-page="method">
+          <label>Metodologia<textarea id="off-methodology" placeholder="Projecte, treball cooperatiu, taller, simulació, recerca..."></textarea></label>
+          <label>Organització de l’aula<textarea id="off-organization" placeholder="Individual, parelles, grups, rols, espais..."></textarea></label>
+          <label>Recursos<textarea id="off-resources" placeholder="Materials, eines, dispositius, aplicacions..."></textarea></label>
+          <label>Mesures i suports<textarea id="off-supports" placeholder="Suports universals, bastides, opcions de representació i expressió..."></textarea></label>
+        </div>
+
+        <div class="template-page" data-template-page="activities">
+          <label>Inicials: què en sabem?<textarea id="off-initial"></textarea></label>
+          <label>Desenvolupament: aprenem nous continguts<textarea id="off-development"></textarea></label>
+          <label>Estructuració: què hem après?<textarea id="off-structuring"></textarea></label>
+          <label>Aplicació: apliquem el que hem après<textarea id="off-application"></textarea></label>
+        </div>
+
+        <div class="template-page" data-template-page="assessment">
+          <label>Evidències<textarea id="off-evidences"></textarea></label>
+          <label>Instruments<textarea id="off-instruments" placeholder="Rúbrica, coavaluació, autoavaluació, llista de control..."></textarea></label>
+          <label>Retorn i millora<textarea id="off-feedback"></textarea></label>
+        </div>
+
+        <div class="template-page" data-template-page="vectors">
+          <label>Aprenentatges competencials<textarea id="off-vector-competency"></textarea></label>
+          <label>Perspectiva de gènere<textarea id="off-vector-gender"></textarea></label>
+          <label>Universalitat del currículum<textarea id="off-vector-universal"></textarea></label>
+          <label>Qualitat de les llengües<textarea id="off-vector-language"></textarea></label>
+          <label>Ciutadania democràtica i consciència global<textarea id="off-vector-citizenship"></textarea></label>
+          <label>Benestar emocional<textarea id="off-vector-wellbeing"></textarea></label>
+        </div>
+
+        <div class="template-page" data-template-page="rubric">
+          <p class="template-help">Escriu un ítem per línia. Si ho deixes buit, es generarà una rúbrica base amb 4 ítems.</p>
+          <label>Ítems de rúbrica<textarea id="off-rubric-items" placeholder="Identificació del problema i recerca&#10;Disseny, planificació i justificació&#10;Proposta, resultats i viabilitat&#10;Comunicació i reflexió final"></textarea></label>
+        </div>
+
+        <div class="template-page" data-template-page="import">
+          <p class="template-help">Importa un document basat en la plantilla. Admet JSON, TXT i DOCX. El DOCX depèn de la compatibilitat del navegador.</p>
+          <input id="official-import-file" type="file" accept=".json,.txt,.docx,application/json,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          <div class="report-actions">
+            <button type="button" id="official-import-button">Importar plantilla</button>
+            <button type="button" id="official-clear-button">Esborrar SA importades/creades</button>
+          </div>
+          <p id="official-status" class="import-status" aria-live="polite"></p>
+        </div>
+
+        <div class="report-actions">
+          <button type="submit">Crear SA amb la plantilla</button>
+          <button type="button" id="official-preview-button">Previsualitzar informe</button>
+        </div>
+      </form>
+    `;
+
+    target.insertAdjacentElement("afterend", panel);
+
+    panel.querySelectorAll("[data-template-tab]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        panel.querySelectorAll("[data-template-tab]").forEach(b => b.classList.toggle("active", b === btn));
+        panel.querySelectorAll("[data-template-page]").forEach(p => p.classList.toggle("active", p.dataset.templatePage === btn.dataset.templateTab));
+      });
+    });
+
+    $("#official-sa-form")?.addEventListener("submit", ev => {
+      ev.preventDefault();
+      try{
+        const item = collectForm();
+        const items = loadOfficial();
+        items.push(item);
+        saveOfficial(items);
+        status("SA creada i afegida al selector.");
+        refreshOfficialSelectors();
+      }catch(err){
+        status(err.message);
+      }
+    });
+
+    $("#official-preview-button")?.addEventListener("click", () => {
+      try{
+        renderOfficial(collectForm());
+      }catch(err){
+        status(err.message);
+      }
+    });
+
+    $("#official-import-button")?.addEventListener("click", importOfficialFile);
+    $("#official-clear-button")?.addEventListener("click", () => {
+      if(confirm("Vols esborrar les SA creades o importades en aquest navegador?")){
+        saveOfficial([]);
+        refreshOfficialSelectors();
+        status("SA creades/importades esborrades.");
+      }
+    });
+  }
+
+  function status(text){
+    const el = $("#official-status");
+    if(el) el.textContent = text;
+  }
+
+  function collectForm(){
+    const title = $("#off-title")?.value.trim();
+    if(!title) throw new Error("Cal escriure el títol de la situació.");
+    const criteria = splitCodes($("#off-criteria")?.value).filter(x => !/^CE/i.test(x));
+    const competences = splitCodes($("#off-competences")?.value).filter(x => /^CE/i.test(x));
+    const rubricItems = splitItems($("#off-rubric-items")?.value);
+    return {
+      id: uid(),
+      official: true,
+      title,
+      course: $("#off-course")?.value || "1eso",
+      subject: $("#off-subject")?.value.trim() || "Matemàtiques",
+      duration: $("#off-duration")?.value.trim() || "",
+      teacherGroup: $("#off-teacher")?.value.trim() || "",
+      context: $("#off-context")?.value.trim() || "",
+      challenge: $("#off-challenge")?.value.trim() || "",
+      justification: $("#off-justification")?.value.trim() || "",
+      product: $("#off-product")?.value.trim() || "",
+      competences: competences.length ? competences : splitItems($("#off-competences")?.value),
+      criteria: criteria.length ? criteria : splitItems($("#off-criteria")?.value),
+      digital: $("#off-digital")?.value.trim() || "",
+      citizen: $("#off-citizen")?.value.trim() || "",
+      entrepreneurial: $("#off-entrepreneurial")?.value.trim() || "",
+      personal: $("#off-personal")?.value.trim() || "",
+      objectives: splitItems($("#off-objectives")?.value),
+      saberBlocks: $("#off-saber-blocks")?.value.trim() || "",
+      sabers: splitItems($("#off-sabers")?.value),
+      methodology: $("#off-methodology")?.value.trim() || "",
+      organization: $("#off-organization")?.value.trim() || "",
+      resources: $("#off-resources")?.value.trim() || "",
+      supports: $("#off-supports")?.value.trim() || "",
+      initial: $("#off-initial")?.value.trim() || "",
+      development: $("#off-development")?.value.trim() || "",
+      structuring: $("#off-structuring")?.value.trim() || "",
+      application: $("#off-application")?.value.trim() || "",
+      evidences: $("#off-evidences")?.value.trim() || "",
+      instruments: $("#off-instruments")?.value.trim() || "",
+      feedback: $("#off-feedback")?.value.trim() || "",
+      vectors: {
+        competency: $("#off-vector-competency")?.value.trim() || "",
+        gender: $("#off-vector-gender")?.value.trim() || "",
+        universal: $("#off-vector-universal")?.value.trim() || "",
+        language: $("#off-vector-language")?.value.trim() || "",
+        citizenship: $("#off-vector-citizenship")?.value.trim() || "",
+        wellbeing: $("#off-vector-wellbeing")?.value.trim() || ""
+      },
+      rubric: rubricItems.length ? rubricItems.map(name => rubricRow(name, criteria)) : defaultRubric(criteria)
+    };
+  }
+
+  function rubricRow(item, criteria){
+    const codes = (criteria && criteria.length ? criteria : ["1.1","1.2","1.3","2.1","2.3","3.1","3.2","6.1"]).join(", ");
+    return {
+      item,
+      criteria: codes,
+      NA: "Mostra evidències molt parcials i necessita molta guia per avançar.",
+      AS: "Resol de manera bàsica amb alguna justificació o evidència suficient.",
+      AN: "Desenvolupa correctament el procés amb coherència, justificació i revisió.",
+      AE: "Integra el procés amb autonomia, transferència i argumentació aprofundida."
+    };
+  }
+
+  function defaultRubric(criteria){
+    return [
+      "Anàlisi de la necessitat i definició del repte",
+      "Ideació, planificació i gestió del procés",
+      "Proposta, resultats i viabilitat",
+      "Comunicació, documentació i reflexió final"
+    ].map(x => rubricRow(x, criteria));
+  }
+
+  function fieldAfter(text, label){
+    const labels = [
+      "TÍTOL","TITOL","CURS","MATÈRIA","MATERIA","DURADA","DOCENT / GRUP",
+      "CONTEXT","REPTE","JUSTIFICACIÓ","JUSTIFICACIO","PRODUCTE FINAL",
+      "COMPETÈNCIES ESPECÍFIQUES","COMPETENCIES ESPECIFIQUES","CRITERIS D’AVALUACIÓ","CRITERIS D'AVALUACIO","CRITERIS D’AVALUACIO",
+      "COMPETÈNCIA DIGITAL","COMPETENCIA DIGITAL","COMPETÈNCIA CIUTADANA","COMPETENCIA CIUTADANA",
+      "COMPETÈNCIA EMPRENEDORA","COMPETENCIA EMPRENEDORA",
+      "COMPETÈNCIA PERSONAL, SOCIAL I D’APRENDRE A APRENDRE","COMPETENCIA PERSONAL, SOCIAL I D'APRENDRE A APRENDRE",
+      "Objectiu 1","Objectiu 2","Objectiu 3","Objectiu 4","Objectiu 5",
+      "BLOCS DE SABERS","SABERS CONCRETS","METODOLOGIA","ORGANITZACIÓ DE L’AULA","ORGANITZACIO DE L'AULA",
+      "RECURSOS","MESURES I SUPORTS","INICIALS: QUÈ EN SABEM?","INICIALS: QUE EN SABEM?",
+      "DESENVOLUPAMENT: APRENEM NOUS CONTINGUTS","ESTRUCTURACIÓ: QUÈ HEM APRÈS?","ESTRUCTURACIO: QUE HEM APRES?",
+      "APLICACIÓ: APLIQUEM EL QUE HEM APRÈS","APLICACIO: APLIQUEM EL QUE HEM APRES",
+      "EVIDÈNCIES","EVIDENCIES","INSTRUMENTS","RETORN I MILLORA",
+      "APRENENTATGES COMPETENCIALS","PERSPECTIVA DE GÈNERE","PERSPECTIVA DE GENERE",
+      "UNIVERSALITAT DEL CURRÍCULUM","UNIVERSALITAT DEL CURRICULUM","QUALITAT DE LES LLENGÜES","QUALITAT DE LES LLENGUES",
+      "CIUTADANIA DEMOCRÀTICA I CONSCIÈNCIA GLOBAL","CIUTADANIA DEMOCRATICA I CONSCIENCIA GLOBAL",
+      "BENESTAR EMOCIONAL","Ítem d’avaluació","Item d'avaluacio","NA","AS","AN","AE",
+      "CE","CA","BLOCS"
+    ];
+    const escaped = labels.map(x => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+    const rx = new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*\\n+([\\s\\S]*?)(?=\\n\\s*(?:" + escaped + ")\\s*\\n|$)", "i");
+    const m = text.match(rx);
+    return m ? m[1].replace(/\[[^\]]*\]/g, "").trim() : "";
+  }
+
+  function parseOfficialText(text){
+    const courseRaw = fieldAfter(text, "CURS");
+    const criteriaText = fieldAfter(text, "CRITERIS D’AVALUACIÓ") || fieldAfter(text, "CA");
+    const competenceText = fieldAfter(text, "COMPETÈNCIES ESPECÍFIQUES") || fieldAfter(text, "CE");
+    const criteria = splitCodes(criteriaText).filter(x => !/^CE/i.test(x));
+    const competences = splitCodes(competenceText).filter(x => /^CE/i.test(x));
+
+    const objectives = [1,2,3,4,5].map(n => fieldAfter(text, "Objectiu " + n)).filter(Boolean);
+    const rubricItems = [
+      "Identificació del problema i recerca",
+      "Disseny, planificació i justificació tècnica",
+      "Construcció, simulació, prova o millora",
+      "Comunicació, documentació i reflexió final"
+    ];
+
+    return {
+      id: uid(),
+      official: true,
+      title: fieldAfter(text, "TÍTOL") || fieldAfter(text, "TITOL") || "Situació importada",
+      course: normalizeCourse(courseRaw),
+      subject: fieldAfter(text, "MATÈRIA") || fieldAfter(text, "MATERIA") || "Matemàtiques",
+      duration: fieldAfter(text, "DURADA"),
+      teacherGroup: fieldAfter(text, "DOCENT / GRUP"),
+      context: fieldAfter(text, "CONTEXT"),
+      challenge: fieldAfter(text, "REPTE"),
+      justification: fieldAfter(text, "JUSTIFICACIÓ") || fieldAfter(text, "JUSTIFICACIO"),
+      product: fieldAfter(text, "PRODUCTE FINAL"),
+      competences: competences.length ? competences : splitItems(competenceText),
+      criteria: criteria.length ? criteria : splitItems(criteriaText),
+      digital: fieldAfter(text, "COMPETÈNCIA DIGITAL") || fieldAfter(text, "COMPETENCIA DIGITAL"),
+      citizen: fieldAfter(text, "COMPETÈNCIA CIUTADANA") || fieldAfter(text, "COMPETENCIA CIUTADANA"),
+      entrepreneurial: fieldAfter(text, "COMPETÈNCIA EMPRENEDORA") || fieldAfter(text, "COMPETENCIA EMPRENEDORA"),
+      personal: fieldAfter(text, "COMPETÈNCIA PERSONAL, SOCIAL I D’APRENDRE A APRENDRE") || fieldAfter(text, "COMPETENCIA PERSONAL, SOCIAL I D'APRENDRE A APRENDRE"),
+      objectives,
+      saberBlocks: fieldAfter(text, "BLOCS DE SABERS") || fieldAfter(text, "BLOCS"),
+      sabers: splitItems(fieldAfter(text, "SABERS CONCRETS")),
+      methodology: fieldAfter(text, "METODOLOGIA"),
+      organization: fieldAfter(text, "ORGANITZACIÓ DE L’AULA") || fieldAfter(text, "ORGANITZACIO DE L'AULA"),
+      resources: fieldAfter(text, "RECURSOS"),
+      supports: fieldAfter(text, "MESURES I SUPORTS"),
+      initial: fieldAfter(text, "INICIALS: QUÈ EN SABEM?") || fieldAfter(text, "INICIALS: QUE EN SABEM?"),
+      development: fieldAfter(text, "DESENVOLUPAMENT: APRENEM NOUS CONTINGUTS"),
+      structuring: fieldAfter(text, "ESTRUCTURACIÓ: QUÈ HEM APRÈS?") || fieldAfter(text, "ESTRUCTURACIO: QUE HEM APRES?"),
+      application: fieldAfter(text, "APLICACIÓ: APLIQUEM EL QUE HEM APRÈS") || fieldAfter(text, "APLICACIO: APLIQUEM EL QUE HEM APRES"),
+      evidences: fieldAfter(text, "EVIDÈNCIES") || fieldAfter(text, "EVIDENCIES"),
+      instruments: fieldAfter(text, "INSTRUMENTS"),
+      feedback: fieldAfter(text, "RETORN I MILLORA"),
+      vectors: {
+        competency: fieldAfter(text, "APRENENTATGES COMPETENCIALS"),
+        gender: fieldAfter(text, "PERSPECTIVA DE GÈNERE") || fieldAfter(text, "PERSPECTIVA DE GENERE"),
+        universal: fieldAfter(text, "UNIVERSALITAT DEL CURRÍCULUM") || fieldAfter(text, "UNIVERSALITAT DEL CURRICULUM"),
+        language: fieldAfter(text, "QUALITAT DE LES LLENGÜES") || fieldAfter(text, "QUALITAT DE LES LLENGUES"),
+        citizenship: fieldAfter(text, "CIUTADANIA DEMOCRÀTICA I CONSCIÈNCIA GLOBAL") || fieldAfter(text, "CIUTADANIA DEMOCRATICA I CONSCIENCIA GLOBAL"),
+        wellbeing: fieldAfter(text, "BENESTAR EMOCIONAL")
+      },
+      rubric: rubricItems.map(x => rubricRow(x, criteria))
+    };
+  }
+
+  async function readDocx(file){
+    const buffer = await file.arrayBuffer();
+    if(!("DecompressionStream" in window)){
+      throw new Error("Aquest navegador no permet llegir DOCX directament. Desa el contingut com a TXT o copia i enganxa el text.");
+    }
+    const bytes = new Uint8Array(buffer);
+    const decoder = new TextDecoder();
+    const sig = [0x50,0x4b,0x03,0x04];
+    let pos = 0;
+    while(pos < bytes.length - 30){
+      if(bytes[pos] !== sig[0] || bytes[pos+1] !== sig[1] || bytes[pos+2] !== sig[2] || bytes[pos+3] !== sig[3]){
+        pos++; continue;
+      }
+      const method = bytes[pos+8] | (bytes[pos+9] << 8);
+      const compressedSize = bytes[pos+18] | (bytes[pos+19] << 8) | (bytes[pos+20] << 16) | (bytes[pos+21] << 24);
+      const fileNameLength = bytes[pos+26] | (bytes[pos+27] << 8);
+      const extraLength = bytes[pos+28] | (bytes[pos+29] << 8);
+      const nameStart = pos + 30;
+      const name = decoder.decode(bytes.slice(nameStart, nameStart + fileNameLength));
+      const dataStart = nameStart + fileNameLength + extraLength;
+      const dataEnd = dataStart + compressedSize;
+      if(name === "word/document.xml"){
+        const fileData = bytes.slice(dataStart, dataEnd);
+        let xml;
+        if(method === 0){
+          xml = decoder.decode(fileData);
+        }else if(method === 8){
+          const ds = new DecompressionStream("deflate-raw");
+          const stream = new Blob([fileData]).stream().pipeThrough(ds);
+          xml = await new Response(stream).text();
+        }else{
+          throw new Error("Format de compressió DOCX no compatible.");
+        }
+        return xmlToText(xml);
+      }
+      pos = dataEnd;
+    }
+    throw new Error("No s'ha trobat el contingut principal del DOCX.");
+  }
+
+  function xmlToText(xml){
+    return xml
+      .replace(/<w:p[^>]*>/g, "\n")
+      .replace(/<w:tab\/>/g, "\t")
+      .replace(/<[^>]+>/g, "")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  async function importOfficialFile(){
+    const file = $("#official-import-file")?.files?.[0];
+    if(!file){ status("Selecciona un fitxer."); return; }
+    try{
+      let item;
+      if(file.name.toLowerCase().endsWith(".json")){
+        const raw = JSON.parse(await file.text());
+        item = Object.assign(officialEmpty(), raw, {id:uid(), official:true});
+        item.course = normalizeCourse(item.course || item.curs);
+        item.rubric = item.rubric && item.rubric.length ? item.rubric : defaultRubric(item.criteria);
+      }else if(file.name.toLowerCase().endsWith(".docx")){
+        item = parseOfficialText(await readDocx(file));
+      }else{
+        item = parseOfficialText(await file.text());
+      }
+      const items = loadOfficial();
+      items.push(item);
+      saveOfficial(items);
+      refreshOfficialSelectors();
+      renderOfficial(item);
+      status("Plantilla importada i afegida al selector.");
+    }catch(err){
+      status(err.message);
+    }
+  }
+
+  function addOfficialOptions(select, course){
+    if(!select) return;
+    const old = select.querySelector("optgroup[label='SA de plantilla']");
+    if(old) old.remove();
+    const items = loadOfficial().filter(x => x.course === course);
+    if(!items.length) return;
+    const group = document.createElement("optgroup");
+    group.label = "SA de plantilla";
+    items.forEach(item => {
+      const opt = document.createElement("option");
+      opt.value = item.id;
+      opt.textContent = "◆ " + item.title;
+      group.appendChild(opt);
+    });
+    select.appendChild(group);
+  }
+
+  function refreshOfficialSelectors(){
+    const saCourse = $("#sa-course")?.value || "1eso";
+    const teacherCourse = $("#teacher-course")?.value || saCourse;
+    setTimeout(() => {
+      addOfficialOptions($("#sa-select"), saCourse);
+      addOfficialOptions($("#teacher-sa"), teacherCourse);
+    }, 80);
+  }
+
+  function getOfficialById(id){
+    return loadOfficial().find(x => x.id === id);
+  }
+
+  function currentOfficial(){
+    return getOfficialById($("#sa-select")?.value) || getOfficialById($("#teacher-sa")?.value);
+  }
+
+  function renderOfficialInputs(){
+    const item = getOfficialById($("#sa-select")?.value);
+    if(!item) return false;
+    const box = $("#sa-inputs");
+    if(!box) return true;
+    box.innerHTML = `
+      <div class="sa-course-note"><span class="custom-sa-badge">SA de plantilla</span> · ${esc(item.subject)} · ${esc(courseLabel(item.course))}</div>
+      <label class="wide">Dades, observacions o evidències de treball
+        <textarea id="official-work-notes" rows="5" placeholder="Anota dades utilitzades, càlculs, decisions o observacions de l’alumnat..."></textarea>
+      </label>
+    `;
+    return true;
+  }
+
+  function p(text){
+    return text ? esc(text) : `<span class="placeholder">[pendent de completar]</span>`;
+  }
+
+  function ul(items){
+    const arr = Array.isArray(items) ? items.filter(Boolean) : splitItems(items);
+    return arr.length ? `<ul>${arr.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="placeholder">[pendent de completar]</p>`;
+  }
+
+  function codePills(items){
+    const arr = Array.isArray(items) ? items : splitCodes(items);
+    return arr.length ? `<div class="criteria-pills">${arr.map(x => `<span class="pill">${esc(x)}</span>`).join("")}</div>` : `<p class="placeholder">[pendent de completar]</p>`;
+  }
+
+  function officialTemplateHTML(item){
+    return `
+      <section class="sa-template">
+        <h3>Programació de la situació d’aprenentatge</h3>
+        <div class="sa-template-grid">
+          <div class="sa-template-card"><strong>Títol</strong>${p(item.title)}</div>
+          <div class="sa-template-card"><strong>Curs</strong>${p(courseLabel(item.course))}</div>
+          <div class="sa-template-card"><strong>Matèria</strong>${p(item.subject)}</div>
+          <div class="sa-template-card"><strong>Durada</strong>${p(item.duration)}</div>
+          <div class="sa-template-card"><strong>Docent / Grup</strong>${p(item.teacherGroup)}</div>
+        </div>
+        <div class="sa-template-section"><h4>Descripció, context i repte</h4><p><strong>Context:</strong> ${p(item.context)}</p><p><strong>Repte:</strong> ${p(item.challenge)}</p><p><strong>Justificació:</strong> ${p(item.justification)}</p><p><strong>Producte final:</strong> ${p(item.product)}</p></div>
+        <div class="sa-template-section"><h4>Competències específiques</h4>${codePills(item.competences)}</div>
+        <div class="sa-template-section"><h4>Criteris d’avaluació</h4>${codePills(item.criteria)}</div>
+        <div class="sa-template-section"><h4>Competències transversals</h4><ul><li><strong>Digital:</strong> ${p(item.digital)}</li><li><strong>Ciutadana:</strong> ${p(item.citizen)}</li><li><strong>Emprenedora:</strong> ${p(item.entrepreneurial)}</li><li><strong>Personal, social i d’aprendre a aprendre:</strong> ${p(item.personal)}</li></ul></div>
+        <div class="sa-template-section"><h4>Objectius d’aprenentatge</h4>${ul(item.objectives)}</div>
+        <div class="sa-template-section"><h4>Sabers</h4><p><strong>Blocs:</strong> ${p(item.saberBlocks)}</p>${ul(item.sabers)}</div>
+        <div class="sa-template-section"><h4>Desenvolupament</h4><p><strong>Metodologia:</strong> ${p(item.methodology)}</p><p><strong>Organització:</strong> ${p(item.organization)}</p><p><strong>Recursos:</strong> ${p(item.resources)}</p><p><strong>Mesures i suports:</strong> ${p(item.supports)}</p></div>
+        <div class="sa-template-section"><h4>Activitats d’aprenentatge i d’avaluació</h4><p><strong>Inicials:</strong> ${p(item.initial)}</p><p><strong>Desenvolupament:</strong> ${p(item.development)}</p><p><strong>Estructuració:</strong> ${p(item.structuring)}</p><p><strong>Aplicació:</strong> ${p(item.application)}</p></div>
+        <div class="sa-template-section"><h4>Evidències, instruments i retorn</h4><p><strong>Evidències:</strong> ${p(item.evidences)}</p><p><strong>Instruments:</strong> ${p(item.instruments)}</p><p><strong>Retorn i millora:</strong> ${p(item.feedback)}</p></div>
+        <div class="sa-template-section"><h4>Vectors</h4><ul><li><strong>Aprenentatges competencials:</strong> ${p(item.vectors?.competency)}</li><li><strong>Perspectiva de gènere:</strong> ${p(item.vectors?.gender)}</li><li><strong>Universalitat del currículum:</strong> ${p(item.vectors?.universal)}</li><li><strong>Qualitat de les llengües:</strong> ${p(item.vectors?.language)}</li><li><strong>Ciutadania democràtica i consciència global:</strong> ${p(item.vectors?.citizenship)}</li><li><strong>Benestar emocional:</strong> ${p(item.vectors?.wellbeing)}</li></ul></div>
+      </section>
+    `;
+  }
+
+  function officialRubricHTML(item){
+    const rows = item.rubric && item.rubric.length ? item.rubric : defaultRubric(item.criteria);
+    return `
+      <section class="formal-rubric">
+        <h3>Rúbrica d’avaluació de la situació</h3>
+        <table class="rubric-table formal">
+          <thead><tr><th>Ítem</th><th>Criteris</th><th>NA</th><th>AS</th><th>AN</th><th>AE</th></tr></thead>
+          <tbody>${rows.map(r => `<tr><td>${esc(r.item || "")}</td><td>${esc(r.criteria || (item.criteria || []).join(", "))}</td><td>${esc(r.NA || "")}</td><td>${esc(r.AS || "")}</td><td>${esc(r.AN || "")}</td><td>${esc(r.AE || "")}</td></tr>`).join("")}</tbody>
+        </table>
+      </section>
+    `;
+  }
+
+  function renderOfficial(item){
+    const result = $("#result");
+    if(!result) return;
+    const notes = $("#official-work-notes")?.value?.trim() || "";
+    result.innerHTML = `
+      <h2>${esc(item.title)}</h2>
+      <p>${p(item.challenge || item.context || item.description)}</p>
+      ${officialTemplateHTML(item)}
+      ${notes ? `<div class="curriculum-box"><h3>Dades, observacions o evidències de treball</h3><p>${esc(notes)}</p></div>` : ""}
+      ${officialRubricHTML(item)}
+      <div class="report-actions">
+        <button type="button" id="export-official-report">Exportar informe format SA</button>
+      </div>
+    `;
+    result.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+
+  function officialGreenReportHTML(item){
+    const notes = $("#official-work-notes")?.value?.trim() || "";
+    const rubric = item.rubric && item.rubric.length ? item.rubric : defaultRubric(item.criteria);
+    function section(title, body){ return `<section class="sa-card"><h2>${esc(title)}</h2>${body}</section>`; }
+    return `
+      <article class="green-report">
+        <section class="cover-block">
+          <div class="vertical-label">PROGRAMACIÓ DE LA SITUACIÓ D’APRENENTATGE</div>
+          <div class="cover-main">
+            <h1>SA · ${esc(item.title)}</h1>
+            <p class="driving-question">${p(item.challenge || item.context)}</p>
+            <div class="top-grid">
+              <div class="info-card"><span>CURS</span><strong>${esc(courseLabel(item.course))}</strong></div>
+              <div class="info-card"><span>MATÈRIA</span><strong>${esc(item.subject)}</strong></div>
+            </div>
+            <div class="soft-card"><h2>Descripció, context i repte</h2><p><strong>Context:</strong> ${p(item.context)}</p><p><strong>Repte:</strong> ${p(item.challenge)}</p><p><strong>Justificació:</strong> ${p(item.justification)}</p></div>
+            <div class="soft-card"><h2>Producte final</h2><p>${p(item.product)}</p></div>
+          </div>
+        </section>
+
+        ${section("Competències específiques", codePills(item.competences))}
+        ${section("Tractament de les competències transversals", `<ul><li><strong>Digital:</strong> ${p(item.digital)}</li><li><strong>Ciutadana:</strong> ${p(item.citizen)}</li><li><strong>Emprenedora:</strong> ${p(item.entrepreneurial)}</li><li><strong>Personal, social i d’aprendre a aprendre:</strong> ${p(item.personal)}</li></ul>`)}
+        ${section("Objectius d’aprenentatge", ul(item.objectives))}
+        ${section("Criteris d’avaluació de la situació", codePills(item.criteria))}
+        ${section("Sabers", `<p><strong>Blocs:</strong> ${p(item.saberBlocks)}</p>${ul(item.sabers)}`)}
+        ${section("Desenvolupament de la situació d’aprenentatge", `<ul><li><strong>Metodologia:</strong> ${p(item.methodology)}</li><li><strong>Organització:</strong> ${p(item.organization)}</li><li><strong>Recursos:</strong> ${p(item.resources)}</li><li><strong>Mesures i suports:</strong> ${p(item.supports)}</li></ul>`)}
+
+        <section class="activity-grid">
+          <div class="activity-card"><h2>Activitats inicials</h2><p>${p(item.initial)}</p></div>
+          <div class="activity-card"><h2>Activitats de desenvolupament</h2><p>${p(item.development)}</p></div>
+          <div class="activity-card"><h2>Activitats d’estructuració</h2><p>${p(item.structuring)}</p></div>
+          <div class="activity-card"><h2>Activitats d’aplicació</h2><p>${p(item.application)}</p></div>
+        </section>
+
+        ${section("Evidències, instruments i retorn", `<ul><li><strong>Evidències:</strong> ${p(item.evidences)}</li><li><strong>Instruments:</strong> ${p(item.instruments)}</li><li><strong>Retorn i millora:</strong> ${p(item.feedback)}</li></ul>`)}
+        ${section("Breu descripció de com s’aborden els vectors", `<ul><li><strong>Aprenentatges competencials:</strong> ${p(item.vectors?.competency)}</li><li><strong>Perspectiva de gènere:</strong> ${p(item.vectors?.gender)}</li><li><strong>Universalitat del currículum:</strong> ${p(item.vectors?.universal)}</li><li><strong>Qualitat de les llengües:</strong> ${p(item.vectors?.language)}</li><li><strong>Ciutadania democràtica i consciència global:</strong> ${p(item.vectors?.citizenship)}</li><li><strong>Benestar emocional:</strong> ${p(item.vectors?.wellbeing)}</li></ul>`)}
+        ${notes ? section("Dades, observacions o evidències de treball", `<p>${esc(notes)}</p>`) : ""}
+
+        <section class="rubric-print">
+          <h2>Rúbrica de la situació d’aprenentatge</h2>
+          <table>
+            <thead><tr><th>Ítem</th><th>Criteris</th><th>NA</th><th>AS</th><th>AN</th><th>AE</th></tr></thead>
+            <tbody>${rubric.map(r => `<tr><td>${esc(r.item)}</td><td>${esc(r.criteria || (item.criteria || []).join(", "))}</td><td>${esc(r.NA)}</td><td>${esc(r.AS)}</td><td>${esc(r.AN)}</td><td>${esc(r.AE)}</td></tr>`).join("")}</tbody>
+          </table>
+        </section>
+      </article>
+    `;
+  }
+
+  function greenPrintStyles(){
+    return `
+      @page{size:A4 landscape;margin:10mm}
+      *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-variant-ligatures:none!important;text-rendering:geometricPrecision!important}
+      body{margin:0;background:#f7fbf8;color:#17231c;font-family:Verdana,Tahoma,Geneva,sans-serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
+      .cover-block{display:grid;grid-template-columns:70px 1fr;gap:16px;min-height:175mm;padding:8px;background:linear-gradient(90deg,#ffffff 0%,#f1fbf5 100%);break-after:page}
+      .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
+      .cover-main{display:grid;align-content:start;gap:12px}
+      h1{font-size:30px;line-height:1.05;margin:0;color:#111827} h2{font-size:15px;margin:0 0 5px;color:#0f6b42}
+      .driving-question{font-size:18px;margin:0;color:#27362f}
+      .top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+      .info-card,.soft-card,.sa-card,.activity-card{background:#fff;border:1px solid #d7e5dc;border-radius:18px;box-shadow:0 12px 30px rgba(15,80,50,.08);padding:14px;break-inside:avoid}
+      .info-card span{display:block;color:#0f6b42;font-weight:700;font-size:12px}.info-card strong{font-size:18px}.soft-card{background:#edfbf2}
+      .sa-card{margin:12px 0;padding:16px} ul{margin:0;padding-left:20px}.sa-card li{margin:5px 0}
+      .criteria-pills{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-flex;border:1px solid #f1d38a;background:#fff8db;color:#855d00;border-radius:999px;padding:5px 9px;font-weight:700}
+      .activity-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}.activity-card{min-height:105px}
+      .placeholder{color:#64748b;font-style:italic}
+      .rubric-print{break-before:page;background:#fff;padding:12px;border-radius:16px}.rubric-print h2{font-size:24px;color:#111827;margin:0 0 12px}
+      table{width:100%;border-collapse:collapse;font-size:12px} th,td{border:1px solid #bdd7c7;padding:7px;vertical-align:top}
+      th{background:#dcf7e7;color:#0f6b42} td:nth-child(1){font-weight:700;color:#0f6b42} td:nth-child(3){background:#fff} td:nth-child(4){background:#fffdf2} td:nth-child(5){background:#f1fbf5} td:nth-child(6){background:#e7f8ef}
+      p,li,td,.driving-question{font-weight:400!important}.report-actions,button{display:none!important}
+      @media print{.sa-card,.activity-card,.soft-card,.info-card{break-inside:avoid}}
+    `;
+  }
+
+  function exportOfficial(item){
+    const doc = `<!doctype html><html lang="ca"><head><meta charset="utf-8"><title>Informe de situació d’aprenentatge</title><style>${greenPrintStyles()}</style></head><body>${officialGreenReportHTML(item)}<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),400));<\/script></body></html>`;
+    const w = window.open("", "_blank");
+    if(!w){ alert("El navegador ha bloquejat la finestra d’impressió."); return; }
+    w.document.open();
+    w.document.write(doc);
+    w.document.close();
+  }
+
+  document.addEventListener("change", ev => {
+    if(ev.target?.id === "sa-course" || ev.target?.id === "teacher-course"){
+      refreshOfficialSelectors();
+    }
+    if(ev.target?.id === "sa-select"){
+      renderOfficialInputs();
+    }
+  }, true);
+
+  document.addEventListener("submit", ev => {
+    if(ev.target?.id === "sa-form"){
+      const item = getOfficialById($("#sa-select")?.value);
+      if(item){
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        renderOfficial(item);
+      }
+    }
+    if(ev.target?.id === "teacher-form"){
+      setTimeout(refreshOfficialSelectors, 50);
+    }
+  }, true);
+
+  document.addEventListener("click", ev => {
+    if(ev.target?.id === "export-official-report"){
+      const item = getOfficialById($("#sa-select")?.value) || getOfficialById($("#teacher-sa")?.value);
+      if(item) exportOfficial(item);
+    }
+  });
+
+  function initOfficialTemplate(){
+    createOfficialPanel();
+    refreshOfficialSelectors();
+    renderOfficialInputs();
+    const result = $("#result");
+    if(result){
+      const observer = new MutationObserver(() => {
+        refreshOfficialSelectors();
+      });
+      observer.observe(result, {childList:true, subtree:true});
+    }
+  }
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", initOfficialTemplate);
+  else initOfficialTemplate();
 })();
