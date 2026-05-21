@@ -1,14 +1,18 @@
 # Situacions d’aprenentatge de Matemàtiques ESO
 
-## Correcció de font d’impressió
+## Correccions
 
-Aquesta versió força la sortida d’impressió amb:
+- Selector de font d’impressió visible dins l’apartat de SA.
+- Arial per defecte i Times New Roman com a alternativa.
+- Correcció de la rúbrica: la columna NA ja no mostra els criteris d’avaluació.
+- Nou botó “Exportar PDF corregit” que genera la rúbrica amb:
+  - Ítem
+  - Criteris numèrics
+  - NA
+  - AS
+  - AN
+  - AE
 
-- Arial per defecte.
-- Times New Roman com a alternativa seleccionable.
+## Recomanació
 
-També s’ha afegit un selector “Font d’impressió” dins l’aplicació.
-
-Si la lletra “l” continua sortint malament amb Arial, selecciona Times New Roman i torna a exportar.
-
-Després de pujar-la a GitHub Pages, esborra la memòria cau o desinstal·la la PWA anterior.
+Després de pujar a GitHub Pages, esborra la memòria cau o desinstal·la la PWA anterior.

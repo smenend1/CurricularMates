@@ -872,7 +872,7 @@
   else init();
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=19").catch(console.warn));
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=20").catch(console.warn));
   }
 })();
 
@@ -2504,4 +2504,311 @@
   }else{
     addFontSelector();
   }
+})();
+
+
+/* Correcció rúbrica i selector de font visible */
+(function(){
+  "use strict";
+
+  function $(id){ return document.getElementById(id); }
+
+  function getPrintFont(){
+    try{
+      return localStorage.getItem("sa_print_font") || "arial";
+    }catch{
+      return "arial";
+    }
+  }
+
+  function setPrintFont(value){
+    try{
+      localStorage.setItem("sa_print_font", value || "arial");
+    }catch{}
+  }
+
+  function fontStack(){
+    return getPrintFont() === "times"
+      ? '"Times New Roman", Times, serif'
+      : 'Arial, Helvetica, sans-serif';
+  }
+
+  function addVisibleFontSelector(){
+    // Selector ben visible dins de l’apartat SA, no només dins el creador.
+    const saForm = $("sa-form");
+    if(saForm && !$("print-font-inline-sa")){
+      const box = document.createElement("div");
+      box.id = "print-font-inline-sa";
+      box.className = "print-font-inline wide";
+      box.innerHTML = `
+        <label>Font d’impressió / PDF
+          <select id="print-font-choice-main">
+            <option value="arial">Arial</option>
+            <option value="times">Times New Roman</option>
+          </select>
+          <small>Canvia-la abans d’exportar si alguna lletra es veu malament.</small>
+        </label>
+      `;
+      const submit = saForm.querySelector("button[type='submit']");
+      if(submit) submit.insertAdjacentElement("beforebegin", box);
+      else saForm.appendChild(box);
+    }
+
+    const select = $("print-font-choice-main");
+    if(select && !select.dataset.bound){
+      select.value = getPrintFont();
+      select.addEventListener("change", () => {
+        setPrintFont(select.value);
+        syncFontSelectors(select.value);
+      });
+      select.dataset.bound = "1";
+    }
+
+    const other = $("print-font-choice");
+    if(other && !other.dataset.syncBound){
+      other.value = getPrintFont();
+      other.addEventListener("change", () => {
+        setPrintFont(other.value);
+        syncFontSelectors(other.value);
+      });
+      other.dataset.syncBound = "1";
+    }
+  }
+
+  function syncFontSelectors(value){
+    ["print-font-choice-main","print-font-choice"].forEach(id => {
+      const el = $(id);
+      if(el) el.value = value;
+    });
+  }
+
+  function escapeHTML(text){
+    return String(text ?? "").replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[ch]));
+  }
+
+  function criteriaCodesFromResult(){
+    const vals = Array.from(document.querySelectorAll("#result .code-pill.criteri, #result .pill"))
+      .map(x => x.textContent.trim())
+      .filter(x => /\d+\.\d+/.test(x));
+    return [...new Set(vals)].join(", ") || "1.1, 1.2, 1.3, 2.1, 2.3, 3.1, 3.2, 6.1";
+  }
+
+  function normalizeRubricRows(){
+    const table = document.querySelector("#result .rubric-table.formal");
+    if(!table) return [];
+
+    const rows = Array.from(table.querySelectorAll("tbody tr")).map(tr => Array.from(tr.children).map(td => td.innerText.trim()));
+    const defaultCriteria = criteriaCodesFromResult();
+
+    return rows.map((r, i) => {
+      // Accepta dues formes:
+      // 5 columnes: Ítem, NA, AS, AN, AE
+      // 6 columnes: Ítem, Criteris, NA, AS, AN, AE
+      if(r.length >= 6){
+        return {
+          item: r[0] || `Ítem ${i+1}`,
+          criteria: r[1] || defaultCriteria,
+          NA: r[2] || "",
+          AS: r[3] || "",
+          AN: r[4] || "",
+          AE: r[5] || ""
+        };
+      }
+      return {
+        item: r[0] || `Ítem ${i+1}`,
+        criteria: defaultCriteria,
+        NA: r[1] || "",
+        AS: r[2] || "",
+        AN: r[3] || "",
+        AE: r[4] || ""
+      };
+    });
+  }
+
+  function fixOnScreenRubric(){
+    const table = document.querySelector("#result .rubric-table.formal");
+    if(!table) return;
+
+    const header = table.querySelector("thead tr");
+    if(!header) return;
+
+    // Si hi ha 5 columnes, afegim criteris. Si n’hi ha 6, no toquem.
+    if(header.children.length === 5){
+      const th = document.createElement("th");
+      th.textContent = "Criteris";
+      header.insertBefore(th, header.children[1]);
+
+      const codes = criteriaCodesFromResult();
+      table.querySelectorAll("tbody tr").forEach(tr => {
+        const td = document.createElement("td");
+        td.textContent = codes;
+        tr.insertBefore(td, tr.children[1]);
+      });
+    }
+
+    // Si per alguna versió anterior els criteris s’han colat a NA, els movem a la columna criteris.
+    if(header.children.length >= 6){
+      table.querySelectorAll("tbody tr").forEach(tr => {
+        const cells = Array.from(tr.children);
+        const criteria = cells[1]?.innerText.trim() || "";
+        const na = cells[2]?.innerText.trim() || "";
+        if(/\d+\.\d+/.test(na) && !/Mostra|No identifica|Té errors|La resposta|No calcula|No aplica|No interpreta/i.test(na)){
+          cells[1].textContent = criteria ? criteria + ", " + na : na;
+          cells[2].textContent = "Mostra evidències molt parcials o necessita molta guia per avançar.";
+        }
+      });
+    }
+  }
+
+  function collectReportData(){
+    const result = $("result");
+    const title = document.querySelector("#result h2")?.innerText.trim()
+      || document.querySelector("#sa-select option:checked")?.textContent.trim()
+      || "Situació d’aprenentatge";
+
+    const course = document.querySelector("#sa-course option:checked")?.textContent.trim()
+      || "ESO";
+    const subject = "Matemàtiques";
+    const summary = result?.querySelector(":scope > p")?.innerText.trim() || "";
+    const steps = Array.from(result?.querySelectorAll(".proc li") || []).map(li => li.innerText.trim());
+    const kpis = Array.from(result?.querySelectorAll(".kpi") || []).map(k => k.innerText.trim().replace(/\n+/g, ": "));
+    const conclusion = $("student-conclusion")?.value.trim() || "[pendent de completar]";
+    const rubric = normalizeRubricRows();
+
+    return {title, course, subject, summary, steps, kpis, conclusion, rubric};
+  }
+
+  function greenPrintStyles(){
+    const stack = fontStack();
+    return `
+      @page{size:A4 landscape;margin:10mm}
+      *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-variant-ligatures:none!important;font-feature-settings:"liga" 0,"clig" 0,"calt" 0!important}
+      html,body,body *{font-family:${stack}!important}
+      body{margin:0;background:#f7fbf8;color:#17231c;line-height:1.38}
+      .green-report{max-width:100%;padding:0}
+      .cover-block{display:grid;grid-template-columns:70px 1fr;gap:16px;min-height:175mm;padding:8px;background:linear-gradient(90deg,#ffffff 0%,#f1fbf5 100%);break-after:page}
+      .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
+      .cover-main{display:grid;align-content:start;gap:12px}
+      h1{font-size:30px;line-height:1.05;margin:0;color:#111827;font-weight:700}
+      h2{font-size:15px;margin:0 0 5px;color:#0f6b42;font-weight:700}
+      .driving-question{font-size:18px;margin:0;color:#27362f;font-weight:400}
+      .top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+      .info-card,.soft-card,.sa-card,.activity-card{background:#fff;border:1px solid #d7e5dc;border-radius:18px;box-shadow:0 12px 30px rgba(15,80,50,.08);padding:14px;break-inside:avoid}
+      .info-card span{display:block;color:#0f6b42;font-weight:700;font-size:12px}.info-card strong{font-size:18px;font-weight:700}.soft-card{background:#edfbf2}
+      .sa-card{margin:12px 0;padding:16px} ul{margin:0;padding-left:20px}.sa-card li{margin:5px 0;font-weight:400}
+      p,li,td{font-weight:400!important}
+      .activity-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}.activity-card{min-height:105px}
+      .placeholder{color:#64748b;font-style:italic}
+      .rubric-print{break-before:page;background:#fff;padding:12px;border-radius:16px}.rubric-print h2{font-size:24px;color:#111827;margin:0 0 12px}
+      table{width:100%;border-collapse:collapse;font-size:12px} th,td{border:1px solid #bdd7c7;padding:7px;vertical-align:top}
+      th{background:#dcf7e7;color:#0f6b42;font-weight:700}
+      td:nth-child(1){font-weight:700!important;color:#0f6b42} td:nth-child(3){background:#fff} td:nth-child(4){background:#fffdf2} td:nth-child(5){background:#f1fbf5} td:nth-child(6){background:#e7f8ef}
+      .report-actions,button{display:none!important}
+      @media print{.sa-card,.activity-card,.soft-card,.info-card{break-inside:avoid}}
+    `;
+  }
+
+  function section(title, body){
+    return `<section class="sa-card"><h2>${escapeHTML(title)}</h2>${body}</section>`;
+  }
+
+  function exportFixedReport(){
+    fixOnScreenRubric();
+    const d = collectReportData();
+
+    const rubricRows = d.rubric.length ? d.rubric : [
+      {item:"Anàlisi de la necessitat i definició del repte", criteria:"1.1, 1.2, 1.3, 2.1, 2.3, 3.1, 3.2, 6.1", NA:"Mostra evidències molt parcials.", AS:"Resol de manera bàsica.", AN:"Desenvolupa correctament el procés.", AE:"Integra el procés amb autonomia."},
+      {item:"Ideació, planificació i gestió del procés", criteria:"1.1, 1.2, 1.3, 2.1, 2.3, 3.1, 3.2, 6.1", NA:"Planificació poc clara.", AS:"Planificació bàsica.", AN:"Planificació coherent.", AE:"Planificació autònoma i millorada."},
+      {item:"Proposta, resultats i viabilitat", criteria:"1.1, 1.2, 1.3, 2.1, 2.3, 3.1, 3.2, 6.1", NA:"Proposta incompleta.", AS:"Proposta parcialment viable.", AN:"Proposta viable i justificada.", AE:"Proposta completa i transferible."},
+      {item:"Comunicació, documentació i reflexió final", criteria:"1.1, 1.2, 1.3, 2.1, 2.3, 3.1, 3.2, 6.1", NA:"Comunica poc el procés.", AS:"Comunica de manera bàsica.", AN:"Comunica amb claredat.", AE:"Documenta i reflexiona amb profunditat."}
+    ];
+
+    const html = `
+      <article class="green-report">
+        <section class="cover-block">
+          <div class="vertical-label">PROGRAMACIÓ DE LA SITUACIÓ D’APRENENTATGE</div>
+          <div class="cover-main">
+            <h1>SA · ${escapeHTML(d.title)}</h1>
+            <p class="driving-question">${escapeHTML(d.summary || "Situació d’aprenentatge contextualitzada.")}</p>
+            <div class="top-grid">
+              <div class="info-card"><span>CURS</span><strong>${escapeHTML(d.course)}</strong></div>
+              <div class="info-card"><span>MATÈRIA</span><strong>${escapeHTML(d.subject)}</strong></div>
+            </div>
+            <div class="soft-card"><h2>Descripció, context i repte</h2><p>${escapeHTML(d.summary || "Repte pendent de completar.")}</p></div>
+            <div class="soft-card"><h2>Producte final</h2><p>Informe justificat amb resultats, procediment, conclusió i rúbrica d’avaluació.</p></div>
+          </div>
+        </section>
+
+        ${section("Resultat i procediment", `
+          ${d.kpis.length ? `<ul>${d.kpis.map(x => `<li>${escapeHTML(x)}</li>`).join("")}</ul>` : `<p>${escapeHTML(d.summary)}</p>`}
+          ${d.steps.length ? `<h2>Procediment</h2><ul>${d.steps.map(x => `<li>${escapeHTML(x)}</li>`).join("")}</ul>` : ""}
+          <p><strong>Conclusió de l’alumnat:</strong> ${escapeHTML(d.conclusion)}</p>
+        `)}
+
+        <section class="rubric-print">
+          <h2>Rúbrica de la situació d’aprenentatge</h2>
+          <table>
+            <thead><tr><th>Ítem</th><th>Criteris</th><th>NA</th><th>AS</th><th>AN</th><th>AE</th></tr></thead>
+            <tbody>
+              ${rubricRows.map(r => `
+                <tr>
+                  <td>${escapeHTML(r.item)}</td>
+                  <td>${escapeHTML(r.criteria)}</td>
+                  <td>${escapeHTML(r.NA)}</td>
+                  <td>${escapeHTML(r.AS)}</td>
+                  <td>${escapeHTML(r.AN)}</td>
+                  <td>${escapeHTML(r.AE)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </section>
+      </article>
+    `;
+
+    const doc = `<!doctype html><html lang="ca"><head><meta charset="utf-8"><title>Informe de situació d’aprenentatge</title><style>${greenPrintStyles()}</style></head><body>${html}<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),400));<\/script></body></html>`;
+    const w = window.open("", "_blank");
+    if(!w){ alert("El navegador ha bloquejat la finestra d’impressió."); return; }
+    w.document.open();
+    w.document.write(doc);
+    w.document.close();
+  }
+
+  function addExportButton(){
+    const result = $("result");
+    if(!result) return;
+    const actions = result.querySelector(".report-actions");
+    if(!actions || $("export-fixed-report")) return;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "export-fixed-report";
+    btn.textContent = "Exportar PDF corregit";
+    btn.addEventListener("click", exportFixedReport);
+    actions.prepend(btn);
+  }
+
+  document.addEventListener("click", ev => {
+    if(ev.target?.id === "export-fixed-report"){
+      exportFixedReport();
+    }
+  });
+
+  const observer = new MutationObserver(() => {
+    addVisibleFontSelector();
+    fixOnScreenRubric();
+    addExportButton();
+  });
+
+  function init(){
+    addVisibleFontSelector();
+    fixOnScreenRubric();
+    addExportButton();
+    const result = $("result");
+    if(result) observer.observe(result, {childList:true, subtree:true});
+  }
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();
