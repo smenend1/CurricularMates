@@ -1,7 +1,7 @@
 {
   "name": "Situacions d’aprenentatge de Matemàtiques ESO",
   "short_name": "SA Matemàtiques",
-  "description": "Eina educativa per crear, importar, treballar, avaluar i exportar situacions d’aprenentatge, amb selector de font i rúbrica corregida.",
+  "description": "Eina educativa per crear, importar, treballar, avaluar i exportar situacions d’aprenentatge, amb Times New Roman com a font d’impressió predeterminada.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

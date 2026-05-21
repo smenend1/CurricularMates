@@ -825,7 +825,7 @@
   function printDoc(title, html){
     const doc=`<!doctype html><html lang="ca"><head><meta charset="utf-8"><title>${title}</title><style>
       @page{size:A4;margin:10mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}
-      body{font-family:Arial, Helvetica, sans-serif;color:#1f2937;line-height:1.38;margin:0}
+      body{font-family:"Times New Roman", Times, serif;color:#1f2937;line-height:1.38;margin:0}
       .print-header{padding:10px 14px;border-radius:12px;background:#1e40af;color:white;margin-bottom:10px;break-inside:avoid}
       .print-header h1{color:white;font-size:22px;margin:0}h2,h3{color:#1e3a8a}.result-card{border-left:5px solid #1d4ed8;border-radius:14px;padding:12px;background:white}
       .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.kpi,.proc,.curriculum-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px;break-inside:avoid}
@@ -872,7 +872,7 @@
   else init();
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=20").catch(console.warn));
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=21").catch(console.warn));
   }
 })();
 
@@ -1109,7 +1109,7 @@
     return `
       @page{size:A4 landscape;margin:10mm}
       *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-variant-ligatures:none!important;text-rendering:geometricPrecision!important}
-      body{margin:0;background:#f7fbf8;color:#17231c;font-family:Arial, Helvetica, sans-serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
+      body{margin:0;background:#f7fbf8;color:#17231c;font-family:"Times New Roman", Times, serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
       .green-report{max-width:100%;padding:0}
       .cover-block{display:grid;grid-template-columns:70px 1fr;gap:16px;min-height:175mm;padding:8px;background:linear-gradient(90deg,#ffffff 0%,#f1fbf5 100%);break-after:page}
       .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
@@ -2345,7 +2345,7 @@
     return `
       @page{size:A4 landscape;margin:10mm}
       *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-variant-ligatures:none!important;text-rendering:geometricPrecision!important}
-      body{margin:0;background:#f7fbf8;color:#17231c;font-family:Arial, Helvetica, sans-serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
+      body{margin:0;background:#f7fbf8;color:#17231c;font-family:"Times New Roman", Times, serif;line-height:1.38;font-variant-ligatures:none;text-rendering:geometricPrecision}
       .cover-block{display:grid;grid-template-columns:70px 1fr;gap:16px;min-height:175mm;padding:8px;background:linear-gradient(90deg,#ffffff 0%,#f1fbf5 100%);break-after:page}
       .vertical-label{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;color:#12643d;letter-spacing:.08em;font-size:13px;text-align:center}
       .cover-main{display:grid;align-content:start;gap:12px}
@@ -2429,9 +2429,9 @@
 
   function getPrintFont(){
     try{
-      return localStorage.getItem("sa_print_font") || "arial";
+      return localStorage.getItem("sa_print_font") || "times";
     }catch(err){
-      return "arial";
+      return "times";
     }
   }
 
@@ -2452,8 +2452,8 @@
       <p class="import-note">Si una lletra es veu malament al PDF, prova l’altra font.</p>
       <label>Font per exportar/imprimir
         <select id="print-font-choice">
-          <option value="arial">Arial</option>
           <option value="times">Times New Roman</option>
+          <option value="arial">Arial</option>
         </select>
       </label>
     `;
@@ -2515,9 +2515,9 @@
 
   function getPrintFont(){
     try{
-      return localStorage.getItem("sa_print_font") || "arial";
+      return localStorage.getItem("sa_print_font") || "times";
     }catch{
-      return "arial";
+      return "times";
     }
   }
 
